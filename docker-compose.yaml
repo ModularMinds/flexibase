@@ -51,6 +51,18 @@ services:
     depends_on:
       - mysql
     restart: unless-stopped
+
+  # Storage Service
+  flexibase-storage:
+    image: modularminds/flexibase-storage
+    container_name: flexibase-storage
+    ports:
+      - ${FLEXIBASE_STORAGE_EXPOSE_PORT}:${FLEXIBASE_STORAGE_EXPOSE_PORT}
+    environment:
+      - FLEXIBASE_STORAGE_EXPOSE_PORT=${FLEXIBASE_STORAGE_EXPOSE_PORT}
+      - FLEXIBASE_ADMIN_USER=${FLEXIBASE_ADMIN_USER}
+      - FLEXIBASE_ADMIN_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
+    restart: unless-stopped
       
 volumes:
   mysql-data:
