@@ -1,7 +1,5 @@
-version: '3.8'
+version: "3.8"
 services:
-
-
   # THIS IS A REQUIRED IMAGE. DO NOT REMOVE IT
   mysql:
     image: mysql
@@ -63,7 +61,7 @@ services:
       - FLEXIBASE_ADMIN_USER=${FLEXIBASE_ADMIN_USER}
       - FLEXIBASE_ADMIN_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
     restart: unless-stopped
-      
+
 volumes:
   mysql-data:
 
