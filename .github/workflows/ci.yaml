@@ -53,8 +53,8 @@ jobs:
         run: yarn build
 
       - name: Run Tests
-        # We skip actual DB integration tests in CI if they rely on a real DB unless we configure the service correctly.
-        # Our mocks (prismaMock) should allow tests to run without a DB.
-        # However, if any tests hit the real DB, they will fail unless we migrate.
-        # Since we heavily use mocks in tests/auth.test.ts, this should pass.
+        env:
+          DATABASE_URL: postgresql://user:password@localhost:5432/auth_db
+          FLEXIBASE_AUTH_SECRET_KEY: test-secret-key-123
+          FLEXIBASE_AUTH_REFRESH_SECRET_KEY: test-refresh-secret-key-456
         run: yarn jest
