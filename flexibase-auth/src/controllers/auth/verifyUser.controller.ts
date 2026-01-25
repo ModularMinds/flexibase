@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
+import { AppError } from "../../utils/AppError";
 
 export const verifyUserController = (req: Request, res: Response) => {
-  try {
-    const { id } = req.user;
-
-    res.json({
-      isSuccess: true,
-      id,
-    });
-  } catch (err) {
-    res.status(500).json({ err, isSuccess: false });
+  if (!req.user) {
+    throw new AppError("Unauthorized", 401);
   }
+  const { id } = req.user;
+
+  res.json({
+    isSuccess: true,
+    id,
+  });
 };

@@ -1,13 +1,17 @@
 import { Router } from "express";
+import { signUpController } from "../controllers/auth/signUp.controller";
+import { signInController } from "../controllers/auth/signIn.controller";
+import { verifyUserController } from "../controllers/auth/verifyUser.controller";
+import { refreshTokenController } from "../controllers/auth/refreshToken.controller";
+import { tokenVerifier } from "../middlewares/tokenVerifier.middleware";
+import { validateResource } from "../middlewares/validateResource.middleware";
 import {
-  signInController,
-  signUpController,
-  verifyUserController,
-  refreshTokenController,
-} from "../controllers";
-import { passwordHasher, tokenVerifier } from "../middlewares";
+  signUpSchema,
+  signInSchema,
+  refreshTokenSchema,
+} from "../schemas/auth.schema";
 
-export const authRouter = Router();
+const authRouter = Router();
 
 /**
  * @swagger
@@ -51,7 +55,9 @@ export const authRouter = Router();
  *       500:
  *         description: Server error
  */
-authRouter.route("/sign-up").post(passwordHasher, signUpController);
+authRouter
+  .route("/sign-up")
+  .post(validateResource(signUpSchema), signUpController);
 
 /**
  * @swagger
@@ -88,7 +94,9 @@ authRouter.route("/sign-up").post(passwordHasher, signUpController);
  *       401:
  *         description: Invalid credentials
  */
-authRouter.route("/sign-in").post(signInController);
+authRouter
+  .route("/sign-in")
+  .post(validateResource(signInSchema), signInController);
 
 /**
  * @swagger
@@ -122,7 +130,9 @@ authRouter.route("/sign-in").post(signInController);
  *       401:
  *         description: Invalid refresh token
  */
-authRouter.route("/refresh-token").post(refreshTokenController);
+authRouter
+  .route("/refresh-token")
+  .post(validateResource(refreshTokenSchema), refreshTokenController);
 
 /**
  * @swagger
@@ -148,3 +158,5 @@ authRouter.route("/refresh-token").post(refreshTokenController);
  *         description: Unauthorized
  */
 authRouter.route("/verify-user").get(tokenVerifier, verifyUserController);
+
+export { authRouter };

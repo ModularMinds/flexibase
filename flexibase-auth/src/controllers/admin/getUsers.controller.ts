@@ -1,17 +1,16 @@
 import { Request, Response } from "express";
 import { prisma } from "../../config/prisma";
 
-export const getUsersController = async (_: Request, res: Response) => {
-  try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-      },
-    });
+export const getUsersController = async (req: Request, res: Response) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      // createdAt: true,
+      // updatedAt: true,
+    },
+  });
 
-    res.json({ isSuccess: true, users });
-  } catch (err: any) {
-    res.status(500).json({ err: err.message, isSuccess: false });
-  }
+  res.json({ isSuccess: true, users });
 };

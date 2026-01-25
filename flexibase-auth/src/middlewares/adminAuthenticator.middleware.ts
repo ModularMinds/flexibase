@@ -7,7 +7,7 @@ export const adminAuthenticator = (
 ) => {
   try {
     // req.user is populated by tokenVerifier
-    const user = req.user as any;
+    const user = req.user;
 
     if (!user || user.role !== "ADMIN") {
       res

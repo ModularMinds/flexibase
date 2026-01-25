@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { JwtPayload, verify } from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
+import { UserPayload } from "../../index";
 
 export const tokenVerifier = (
   req: Request,
@@ -22,7 +23,7 @@ export const tokenVerifier = (
     req.user = verify(
       token,
       process.env.FLEXIBASE_AUTH_SECRET_KEY!,
-    ) as JwtPayload;
+    ) as UserPayload;
 
     next();
   } catch (err) {

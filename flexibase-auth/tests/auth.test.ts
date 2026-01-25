@@ -1,6 +1,7 @@
 import request from "supertest";
 import { app } from "../src/app";
 import { prismaMock } from "../src/config/prismaMock";
+import { User } from "@prisma/client";
 
 describe("Auth Endpoints", () => {
   describe("POST /api/auth/sign-up", () => {
@@ -15,7 +16,9 @@ describe("Auth Endpoints", () => {
         email: newUser.email,
         password: "hashedpassword",
         role: "USER",
-      } as any);
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User);
 
       const res = await request(app).post("/api/auth/sign-up").send(newUser);
 
@@ -23,6 +26,32 @@ describe("Auth Endpoints", () => {
       expect(res.body).toHaveProperty("accessToken");
       expect(res.body).toHaveProperty("refreshToken");
       expect(res.body.isSuccess).toBe(true);
+      expect(res.body.isSuccess).toBe(true);
+    });
+
+    it("should fail when user already exists", async () => {
+      prismaMock.user.create.mockRejectedValue(
+        new Error("Unique constraint failed"),
+      );
+
+      const res = await request(app).post("/api/auth/sign-up").send({
+        email: "existing@example.com",
+        password: "password123",
+      });
+
+      expect(res.statusCode).toEqual(500); // 409 would be better but controller returns 500 for errors
+      expect(res.body.isSuccess).toBe(false);
+    });
+
+    it("should fail with invalid email format", async () => {
+      const res = await request(app).post("/api/auth/sign-up").send({
+        email: "invalid-email",
+        password: "password123",
+      });
+
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.isSuccess).toBe(false);
+      expect(res.body.err).toBeDefined();
     });
   });
 
@@ -33,7 +62,9 @@ describe("Auth Endpoints", () => {
         email: "test@example.com",
         password: "hashed_password", // In real world this works if bcrypt.compare returns true
         role: "USER",
-      };
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as User;
 
       prismaMock.user.findUnique.mockResolvedValue(mockUser);
 
@@ -49,6 +80,18 @@ describe("Auth Endpoints", () => {
       expect(res.statusCode).toEqual(401);
       expect(res.body.isSuccess).toBe(false);
       expect(res.body.err).toBe("invalid credentials");
+    });
+
+    it("should fail when user not found", async () => {
+      prismaMock.user.findUnique.mockResolvedValue(null);
+
+      const res = await request(app).post("/api/auth/sign-in").send({
+        email: "nonexistent@example.com",
+        password: "password123",
+      });
+
+      expect(res.statusCode).toEqual(401);
+      expect(res.body.isSuccess).toBe(false);
     });
   });
 

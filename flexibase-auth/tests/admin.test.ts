@@ -2,6 +2,7 @@ import request from "supertest";
 import { app } from "../src/app";
 import { prismaMock } from "../src/config/prismaMock";
 import { generateAccessToken } from "../src/services/token.service";
+import { User } from "@prisma/client";
 
 describe("Admin Endpoints", () => {
   describe("GET /api/auth/admin/get-users", () => {
@@ -16,8 +17,8 @@ describe("Admin Endpoints", () => {
           role: "USER",
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
-      ] as any);
+        } as User,
+      ]);
 
       const res = await request(app)
         .get("/api/auth/admin/get-users")

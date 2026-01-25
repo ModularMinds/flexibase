@@ -6,36 +6,34 @@ import {
   generateRefreshToken,
 } from "../../services/token.service";
 
+import { AppError } from "../../utils/AppError";
+
 export const signInController = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
 
-    if (!user) {
-      res.status(401).json({ err: "invalid credentials", isSuccess: false });
-      return;
-    }
-
-    const isPasswordMatch = await compare(password, user.password);
-
-    if (!isPasswordMatch) {
-      res.status(401).json({ err: "invalid credentials", isSuccess: false });
-      return;
-    }
-
-    const accessToken = generateAccessToken(user.id, user.role);
-    const refreshToken = await generateRefreshToken(user.id);
-
-    res.json({
-      message: "login success",
-      accessToken,
-      refreshToken,
-      isSuccess: true,
-    });
-  } catch (err) {
-    res.status(500).json({ err, isSuccess: false });
+  if (!user) {
+    throw new AppError("invalid credentials", 401);
   }
+
+  const isPasswordMatch = await compare(password, user.password);
+
+  if (!isPasswordMatch) {
+    throw new AppError("invalid credentials", 401);
+  }
+
+  const accessToken = generateAccessToken(user.id, user.role);
+  const refreshToken = await generateRefreshToken(user.id);
+
+  res.json({
+    message: "User logged in successfully",
+    isSuccess: true,
+    accessToken,
+    refreshToken,
+  });
 };

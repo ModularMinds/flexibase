@@ -5,51 +5,31 @@ import {
   revokeRefreshToken,
   generateRefreshToken,
 } from "../../services/token.service";
-import { prisma } from "../../config/prisma";
+import { AppError } from "../../utils/AppError";
 
 export const refreshTokenController = async (req: Request, res: Response) => {
-  try {
-    const { refreshToken } = req.body;
+  const { refreshToken } = req.body;
 
-    if (!refreshToken) {
-      res
-        .status(400)
-        .json({ err: "Refresh token is required", isSuccess: false });
-      return;
-    }
-
-    const payload = await verifyRefreshToken(refreshToken);
-
-    if (!payload) {
-      res
-        .status(401)
-        .json({ err: "Invalid or expired refresh token", isSuccess: false });
-      return;
-    }
-
-    // Optional: Rotate refresh token (revoke old, issue new)
-    // For tighter security, let's rotate it.
-    await revokeRefreshToken(payload.tokenId);
-
-    const user = await prisma.user.findUnique({
-      where: { id: payload.userId },
-    });
-
-    if (!user) {
-      res.status(401).json({ err: "User not found", isSuccess: false });
-      return;
-    }
-
-    const newRefreshToken = await generateRefreshToken(payload.userId);
-    const newAccessToken = generateAccessToken(payload.userId, user.role);
-
-    res.json({
-      message: "Token refreshed successfully",
-      isSuccess: true,
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    });
-  } catch (err: any) {
-    res.status(500).json({ err: err.message, isSuccess: false });
+  if (!refreshToken) {
+    throw new AppError("Refresh token is required", 400);
   }
+
+  const result = await verifyRefreshToken(refreshToken);
+
+  if (!result) {
+    throw new AppError("Invalid refresh token", 401);
+  }
+
+  // Revoke the old refresh token (Rotation)
+  await revokeRefreshToken(result.tokenId);
+
+  // Generate new tokens
+  const newAccessToken = generateAccessToken(result.userId, "USER");
+  const newRefreshToken = await generateRefreshToken(result.userId);
+
+  res.json({
+    isSuccess: true,
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+  });
 };

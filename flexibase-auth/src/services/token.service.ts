@@ -1,6 +1,7 @@
 import { sign, verify } from "jsonwebtoken";
 import { prisma } from "../config/prisma";
 import { v4 as uuidv4 } from "uuid";
+import { UserPayload } from "../../index";
 
 export const generateAccessToken = (userId: string, role: string) => {
   return sign({ id: userId, role }, process.env.FLEXIBASE_AUTH_SECRET_KEY!, {
@@ -33,7 +34,7 @@ export const verifyRefreshToken = async (token: string) => {
     const payload = verify(
       token,
       process.env.FLEXIBASE_AUTH_REFRESH_SECRET_KEY!,
-    ) as any;
+    ) as UserPayload;
 
     const storedToken = await prisma.refreshToken.findUnique({
       where: { token },

@@ -1,15 +1,14 @@
-import { RowDataPacket } from "mysql2";
+import { JwtPayload } from "jsonwebtoken";
 
 declare global {
   namespace Express {
     interface Request {
-      user: JwtPayload;
+      user?: UserPayload;
     }
   }
 }
 
-interface User extends RowDataPacket {
+export interface UserPayload extends JwtPayload {
   id: string;
-  email: string;
-  password: string;
+  role: string;
 }
