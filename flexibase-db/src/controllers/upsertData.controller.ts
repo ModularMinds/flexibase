@@ -1,0 +1,50 @@
+import { NextFunction, Request, Response } from "express";
+import { prisma } from "../config/prisma";
+import { logger } from "../config/logger";
+
+export const upsertDataController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { tableName, data, conflictColumns } = req.body;
+
+  const quotedTableName = `"${tableName.replace(/"/g, '""')}"`;
+  const keys = Object.keys(data);
+  const values = Object.values(data);
+
+  const quotedColumns = keys
+    .map((key) => `"${key.replace(/"/g, '""')}"`)
+    .join(", ");
+  const placeholders = values.map((_, index) => `$${index + 1}`).join(", ");
+
+  const quotedConflictColumns = conflictColumns
+    .map((col: string) => `"${col.replace(/"/g, '""')}"`)
+    .join(", ");
+
+  const updateClauses = keys
+    .map(
+      (key) =>
+        `"${key.replace(/"/g, '""')}" = EXCLUDED."${key.replace(/"/g, '""')}"`,
+    )
+    .join(", ");
+
+  const upsertQuery = `
+    INSERT INTO ${quotedTableName} (${quotedColumns}) 
+    VALUES (${placeholders}) 
+    ON CONFLICT (${quotedConflictColumns}) 
+    DO UPDATE SET ${updateClauses}
+  `;
+
+  try {
+    await prisma.$executeRawUnsafe(upsertQuery, ...values);
+
+    res.status(200).json({
+      isSuccess: true,
+      message: `Data upserted into table '${tableName}' successfully.`,
+    });
+  } catch (err: any) {
+    logger.error("Error upserting data:", err);
+    next(err);
+  }
+};

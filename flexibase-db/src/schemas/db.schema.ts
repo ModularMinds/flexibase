@@ -44,3 +44,44 @@ export const getColumnsSchema = z.object({
     tableName: z.string().min(1, "Table name is required"),
   }),
 });
+
+export const updateDataSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    data: z
+      .record(z.string(), z.any())
+      .refine((data) => Object.keys(data).length > 0, {
+        message: "Data object must not be empty",
+      }),
+    conditions: z
+      .record(z.string(), z.any())
+      .refine((data) => Object.keys(data).length > 0, {
+        message: "Conditions object must not be empty",
+      }),
+  }),
+});
+
+export const deleteDataSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    conditions: z
+      .record(z.string(), z.any())
+      .refine((data) => Object.keys(data).length > 0, {
+        message: "Conditions object must not be empty",
+      }),
+  }),
+});
+
+export const upsertDataSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    data: z
+      .record(z.string(), z.any())
+      .refine((data) => Object.keys(data).length > 0, {
+        message: "Data object must not be empty",
+      }),
+    conflictColumns: z
+      .array(z.string())
+      .min(1, "At least one conflict column is required"),
+  }),
+});
