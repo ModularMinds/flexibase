@@ -20,10 +20,7 @@ export const getAllTablesController = async (
     return;
   } catch (err: any) {
     logger.error("Error fetching tables:", err);
-    res.status(500).json({
-      isSuccess: false,
-      error: err.message,
-    });
+    next(err);
     return;
   }
 };

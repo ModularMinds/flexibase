@@ -2,6 +2,29 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 
+const POSTGRES_TYPES_WHITELIST = [
+  "SERIAL",
+  "SMALLSERIAL",
+  "BIGSERIAL",
+  "INTEGER",
+  "BIGINT",
+  "SMALLINT",
+  "DECIMAL",
+  "NUMERIC",
+  "REAL",
+  "DOUBLE PRECISION",
+  "BOOLEAN",
+  "CHAR",
+  "VARCHAR",
+  "TEXT",
+  "DATE",
+  "TIMESTAMP",
+  "TIMESTAMPTZ",
+  "JSON",
+  "JSONB",
+  "UUID",
+];
+
 export const createTableController = async (
   req: Request,
   res: Response,
@@ -25,9 +48,13 @@ export const createTableController = async (
           throw new Error("Each column must have a name and a type.");
 
         const quotedColName = `"${column.name.replace(/"/g, '""')}"`;
-        // We can't easily quote types/constraints in a standard way without a whitelist,
-        // but since this is an admin route, we rely on Basic Auth + some validation.
-        // For robustness, we should ideally whitelist types.
+
+        // Type safety: Whitelist check
+        const baseType = column.type.split("(")[0].toUpperCase().trim();
+        if (!POSTGRES_TYPES_WHITELIST.includes(baseType)) {
+          throw new Error(`Unsupported or unsafe column type: ${column.type}`);
+        }
+
         return `${quotedColName} ${column.type} ${column.constraints || ""}`.trim();
       })
       .join(", ");
@@ -43,7 +70,7 @@ export const createTableController = async (
     return;
   } catch (err: any) {
     logger.error("Error creating table:", err);
-    res.status(500).json({ isSuccess: false, error: err.message });
+    next(err);
     return;
   }
 };

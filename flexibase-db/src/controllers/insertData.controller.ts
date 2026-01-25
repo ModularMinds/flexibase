@@ -38,10 +38,7 @@ export const insertDataController = async (
     return;
   } catch (err: any) {
     logger.error("Error inserting data:", err);
-    res.status(500).json({
-      isSuccess: false,
-      error: err.message,
-    });
+    next(err);
     return;
   }
 };

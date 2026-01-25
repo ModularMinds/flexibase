@@ -30,10 +30,7 @@ export const deleteTableController = async (
     return;
   } catch (err: any) {
     logger.error("Error deleting table:", err);
-    res.status(500).json({
-      isSuccess: false,
-      error: err.message,
-    });
+    next(err);
     return;
   }
 };

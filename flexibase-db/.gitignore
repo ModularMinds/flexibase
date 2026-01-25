@@ -1,5 +1,38 @@
+# Dependencies
 node_modules
-dist
-.env
+/package-lock.json
+/yarn.lock
 
+# Build
+dist
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Prisma
+/prisma/*.db
+/prisma/*.db-journal
 /src/generated/prisma
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
+coverage
+.nyc_output
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

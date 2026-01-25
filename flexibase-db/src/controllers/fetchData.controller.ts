@@ -51,10 +51,7 @@ export const fetchDataController = async (
     return;
   } catch (err: any) {
     logger.error("Error fetching data:", err);
-    res.status(500).json({
-      isSuccess: false,
-      error: err.message,
-    });
+    next(err);
     return;
   }
 };

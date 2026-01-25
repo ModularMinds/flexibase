@@ -5,4 +5,4 @@ import { adminRouter } from "./admin.routes";
 export const rootRouter = Router();
 
 rootRouter.use("/db/admin", adminRouter);
-rootRouter.use("/db", crudRouter);
+rootRouter.use("/db/crud", crudRouter);

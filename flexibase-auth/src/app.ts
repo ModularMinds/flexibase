@@ -31,9 +31,19 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/auth/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api", rootRouter);
 
+/**
+ * @openapi
+ * /auth/service-check:
+ *   get:
+ *     summary: Service health check
+ *     tags: [Utility]
+ *     responses:
+ *       200:
+ *         description: Service is available
+ */
 app.get("/api/auth/service-check", (_, res) => {
   res.json({ isServiceAvailable: true });
 });
