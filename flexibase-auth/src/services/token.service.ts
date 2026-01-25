@@ -40,7 +40,11 @@ export const verifyRefreshToken = async (token: string) => {
       where: { token },
     });
 
-    if (!storedToken || storedToken.revoked) {
+    if (
+      !storedToken ||
+      storedToken.revoked ||
+      storedToken.expiresAt < new Date()
+    ) {
       return null;
     }
 

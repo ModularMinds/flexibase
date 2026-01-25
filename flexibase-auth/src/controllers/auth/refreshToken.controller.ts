@@ -4,7 +4,7 @@ import {
   verifyRefreshToken,
   revokeRefreshToken,
   generateRefreshToken,
-} from "../../services/token.service";
+} from "../../services";
 import { AppError } from "../../utils/AppError";
 
 export const refreshTokenController = async (req: Request, res: Response) => {

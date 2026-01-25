@@ -6,6 +6,9 @@ export const apiCallLogger = (
   res: Response,
   next: NextFunction,
 ) => {
-  logger.info(`Incoming Request: [${req.method}] ${req.url}`);
+  const requestId = req.id || "unknown";
+  logger.info(
+    `Incoming Request: [${req.method}] ${req.url} [req-id:${requestId}]`,
+  );
   next();
 };

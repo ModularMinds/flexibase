@@ -17,6 +17,10 @@ describe("Admin Endpoints", () => {
           role: "USER",
           createdAt: new Date(),
           updatedAt: new Date(),
+          name: null,
+          bio: null,
+          avatarUrl: null,
+          isActive: true,
         } as User,
       ]);
 
@@ -43,6 +47,83 @@ describe("Admin Endpoints", () => {
     it("should deny access without token", async () => {
       const res = await request(app).get("/api/auth/admin/get-users");
       expect(res.statusCode).toEqual(401);
+    });
+  });
+
+  describe("PATCH /api/auth/admin/users/:id/status", () => {
+    it("should suspend user", async () => {
+      const adminToken = generateAccessToken("admin-id", "ADMIN");
+      const userId = "user-to-suspend";
+
+      prismaMock.user.update.mockResolvedValue({
+        id: userId,
+        isActive: false,
+      } as User);
+
+      prismaMock.refreshToken.updateMany.mockResolvedValue({ count: 1 });
+
+      const res = await request(app)
+        .patch(`/api/auth/admin/users/${userId}/status`)
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ isActive: false });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.isSuccess).toBe(true);
+      expect(res.body.message).toContain("suspended");
+      expect(prismaMock.refreshToken.updateMany).toHaveBeenCalledWith({
+        where: { userId },
+        data: { revoked: true },
+      });
+    });
+
+    it("should activate user", async () => {
+      const adminToken = generateAccessToken("admin-id", "ADMIN");
+      const userId = "user-to-activate";
+
+      prismaMock.user.update.mockResolvedValue({
+        id: userId,
+        isActive: true,
+      } as User);
+
+      const res = await request(app)
+        .patch(`/api/auth/admin/users/${userId}/status`)
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ isActive: true });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.isSuccess).toBe(true);
+      expect(res.body.message).toContain("activated");
+    });
+  });
+
+  describe("DELETE /api/auth/admin/users/:id", () => {
+    it("should allow admin to delete another user", async () => {
+      const adminToken = generateAccessToken("admin-id", "ADMIN");
+      const userId = "user-to-delete";
+
+      prismaMock.user.delete.mockResolvedValue({
+        id: userId,
+        email: "deleted@example.com",
+      } as User);
+
+      const res = await request(app)
+        .delete(`/api/auth/admin/users/${userId}`)
+        .set("Authorization", `Bearer ${adminToken}`);
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.isSuccess).toBe(true);
+    });
+
+    it("should fail when admin tries to delete themselves", async () => {
+      const adminId = "admin-id";
+      const adminToken = generateAccessToken(adminId, "ADMIN");
+
+      const res = await request(app)
+        .delete(`/api/auth/admin/users/${adminId}`)
+        .set("Authorization", `Bearer ${adminToken}`);
+
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.err).toBe("You cannot delete yourself");
     });
   });
 });

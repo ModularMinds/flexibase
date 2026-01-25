@@ -1,0 +1,60 @@
+name: Flexibase Auth CI
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "flexibase-auth/**"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "flexibase-auth/**"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./flexibase-auth
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: auth_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "yarn"
+          cache-dependency-path: flexibase-auth/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: yarn prisma generate
+
+      - name: Build
+        run: yarn build
+
+      - name: Run Tests
+        # We skip actual DB integration tests in CI if they rely on a real DB unless we configure the service correctly.
+        # Our mocks (prismaMock) should allow tests to run without a DB.
+        # However, if any tests hit the real DB, they will fail unless we migrate.
+        # Since we heavily use mocks in tests/auth.test.ts, this should pass.
+        run: yarn jest
