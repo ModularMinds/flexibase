@@ -14,7 +14,33 @@ export const insertDataSchema = z.object({
 export const fetchDataSchema = z.object({
   body: z.object({
     tableName: z.string().min(1, "Table name is required").max(63),
-    conditions: z.record(z.string(), z.any()).optional(),
+    columns: z.array(z.string()).optional(),
+    filters: z
+      .array(
+        z.object({
+          column: z.string().min(1),
+          operator: z.enum([
+            "eq",
+            "neq",
+            "gt",
+            "gte",
+            "lt",
+            "lte",
+            "like",
+            "in",
+          ]),
+          value: z.any(),
+        }),
+      )
+      .optional(),
+    sort: z
+      .object({
+        column: z.string().min(1),
+        direction: z.enum(["asc", "desc"]).default("asc"),
+      })
+      .optional(),
+    limit: z.number().int().positive().optional(),
+    offset: z.number().int().nonnegative().optional(),
   }),
 });
 

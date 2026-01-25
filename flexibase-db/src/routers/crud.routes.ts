@@ -57,29 +57,59 @@ router.post(
 /**
  * @openapi
  * /db/crud/fetch-data:
- *   get:
+ *   post:
  *     tags:
  *       - CRUD
- *     summary: Fetch data from a table
+ *     summary: Fetch data from a table with advanced querying
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: tableName
- *         required: true
- *         schema:
- *           type: string
- *       - in: query
- *         name: conditions
- *         schema:
- *           type: object
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - tableName
+ *             properties:
+ *               tableName:
+ *                 type: string
+ *               columns:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: List of columns to return (projections)
+ *               filters:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     column:
+ *                       type: string
+ *                     operator:
+ *                       type: string
+ *                       enum: [eq, neq, gt, gte, lt, lte, like, in]
+ *                     value:
+ *                       type: any
+ *               sort:
+ *                 type: object
+ *                 properties:
+ *                   column:
+ *                     type: string
+ *                   direction:
+ *                     type: string
+ *                     enum: [asc, desc]
+ *               limit:
+ *                 type: integer
+ *               offset:
+ *                 type: integer
  *     responses:
  *       200:
  *         description: Data fetched successfully
- *       404:
- *         description: Table not found
+ *       400:
+ *         description: Invalid input
  */
-router.get(
+router.post(
   "/fetch-data",
   validateResource(fetchDataSchema),
   fetchDataController,
