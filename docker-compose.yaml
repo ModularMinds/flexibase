@@ -1,36 +1,33 @@
 version: "3.8"
 services:
   # THIS IS A REQUIRED IMAGE. DO NOT REMOVE IT
-  mysql:
-    image: mysql
-    container_name: mysql
+  postgres:
+    image: postgres:15
+    container_name: postgres
     ports:
-      - ${DB_EXPOSE_PORT}:3306
+      - ${DB_EXPOSE_PORT}:5432
     environment:
-      - MYSQL_ROOT_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
-      - MYSQL_USER=${FLEXIBASE_ADMIN_USER}
-      - MYSQL_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
+      - POSTGRES_USER=${FLEXIBASE_ADMIN_USER}
+      - POSTGRES_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
-      - mysql-data:/var/lib/mysql
+      - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
 
   # Authentication Service
+
   flexibase-auth:
-    image: modularminds/flexibase-auth
+    build: ./flexibase-auth
     container_name: flexibase-auth
     ports:
       - ${FLEXIBASE_AUTH_EXPOSE_PORT}:${FLEXIBASE_AUTH_EXPOSE_PORT}
     environment:
       - FLEXIBASE_AUTH_EXPOSE_PORT=${FLEXIBASE_AUTH_EXPOSE_PORT}
       - FLEXIBASE_AUTH_SECRET_KEY=${FLEXIBASE_AUTH_SECRET_KEY}
-      - FLEXIBASE_ADMIN_USER=${FLEXIBASE_ADMIN_USER}
-      - FLEXIBASE_ADMIN_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
-      - DB_HOST=mysql
-      - DB_NAME=${DB_NAME}
-      - DB_EXPOSE_PORT=${DB_EXPOSE_PORT}
+      - FLEXIBASE_AUTH_REFRESH_SECRET_KEY=${FLEXIBASE_AUTH_REFRESH_SECRET_KEY}
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
-      - mysql
+      - postgres
     restart: unless-stopped
 
   # Database Service
@@ -45,9 +42,9 @@ services:
       - FLEXIBASE_ADMIN_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
       - DB_EXPOSE_PORT=${DB_EXPOSE_PORT}
       - DB_NAME=${DB_NAME}
-      - DB_HOST=mysql
+      - DB_HOST=postgres
     depends_on:
-      - mysql
+      - postgres
     restart: unless-stopped
 
   # Storage Service
@@ -63,7 +60,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  mysql-data:
+  postgres-data:
 
 networks:
   default:

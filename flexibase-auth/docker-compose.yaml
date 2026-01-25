@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+
+  mysql:
+    image: mysql
+    container_name: mysql
+    ports:
+      - ${DB_EXPOSE_PORT}:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
+      - MYSQL_USER=${FLEXIBASE_ADMIN_USER}
+      - MYSQL_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+
+  flexibase-auth:
+    build: .
+    container_name: flexibase-auth
+    ports:
+      - ${FLEXIBASE_AUTH_EXPOSE_PORT}:${FLEXIBASE_AUTH_EXPOSE_PORT}
+    environment:
+      - FLEXIBASE_AUTH_EXPOSE_PORT=${FLEXIBASE_AUTH_EXPOSE_PORT}
+      - FLEXIBASE_AUTH_SECRET_KEY=${FLEXIBASE_AUTH_SECRET_KEY}
+      - FLEXIBASE_ADMIN_USER=${FLEXIBASE_ADMIN_USER}
+      - FLEXIBASE_ADMIN_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD}
+      - DB_HOST=mysql
+      - DB_NAME=${DB_NAME}
+      - DB_EXPOSE_PORT=${DB_EXPOSE_PORT}
+    depends_on:
+      - mysql
+    restart: unless-stopped
+      
+volumes:
+  mysql-data:
+
+networks:
+  default:
+    name: flexibase-auth-network
