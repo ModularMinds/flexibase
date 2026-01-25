@@ -2,6 +2,11 @@ import { Router } from "express";
 import { signUpController } from "../controllers/auth/signUp.controller";
 import { signInController } from "../controllers/auth/signIn.controller";
 import { verifyUserController } from "../controllers/auth/verifyUser.controller";
+import {
+  getMeController,
+  updateMeController,
+} from "../controllers/auth/profile.controller";
+import { changePasswordController } from "../controllers/auth/changePassword.controller";
 import { refreshTokenController } from "../controllers/auth/refreshToken.controller";
 import { tokenVerifier } from "../middlewares/tokenVerifier.middleware";
 import { validateResource } from "../middlewares/validateResource.middleware";
@@ -9,6 +14,8 @@ import {
   signUpSchema,
   signInSchema,
   refreshTokenSchema,
+  updateProfileSchema,
+  changePasswordSchema,
 } from "../schemas/auth.schema";
 
 const authRouter = Router();
@@ -63,7 +70,7 @@ authRouter
  * @swagger
  * /auth/sign-in:
  *   post:
- *     summary: detailed documentation for sign-in
+ *     summary: Sign in and retrieve tokens
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -158,5 +165,85 @@ authRouter
  *         description: Unauthorized
  */
 authRouter.route("/verify-user").get(tokenVerifier, verifyUserController);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Get current user profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile
+ */
+authRouter.get("/me", tokenVerifier, getMeController);
+
+/**
+ * @swagger
+ * /auth/me:
+ *   patch:
+ *     summary: Update current user profile
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               bio:
+ *                 type: string
+ *               avatarUrl:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated
+ */
+authRouter.patch(
+  "/me",
+  tokenVerifier,
+  validateResource(updateProfileSchema),
+  updateMeController,
+);
+
+/**
+ * @swagger
+ * /auth/change-password:
+ *   post:
+ *     summary: Change password
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password changed
+ *       401:
+ *         description: Invalid old password or unauthorized
+ */
+authRouter.post(
+  "/change-password",
+  tokenVerifier,
+  validateResource(changePasswordSchema),
+  changePasswordController,
+);
 
 export { authRouter };

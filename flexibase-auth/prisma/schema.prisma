@@ -1,6 +1,5 @@
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -8,9 +7,13 @@ generator client {
 }
 
 model User {
-  id            String         @id @default(uuid())
-  email         String         @unique
-  password      String
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  name      String?
+  bio       String?
+  avatarUrl String?
+  isActive  Boolean @default(true)
 
   role          Role           @default(USER)
   refreshTokens RefreshToken[]

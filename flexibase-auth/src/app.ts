@@ -1,4 +1,3 @@
-import "express-async-errors"; // Must be at the top
 import "./config/env";
 
 import express from "express";
@@ -10,7 +9,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import swaggerUi from "swagger-ui-express";
 import { rootRouter } from "./routers";
-import { apiCallLogger, errorHandler } from "./middlewares";
+import { apiCallLogger, errorHandler, requestId } from "./middlewares";
 import { logger } from "./config/logger";
 import { swaggerSpec } from "./config/swagger";
 
@@ -19,6 +18,7 @@ export const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+app.use(requestId); // Must be before logger
 app.use(apiCallLogger);
 
 // Rate Limiting
