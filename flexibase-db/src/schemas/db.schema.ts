@@ -1,0 +1,46 @@
+import { z } from "zod";
+
+export const insertDataSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    data: z
+      .record(z.string(), z.any())
+      .refine((data) => Object.keys(data).length > 0, {
+        message: "Data object must not be empty",
+      }),
+  }),
+});
+
+export const fetchDataSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    conditions: z.record(z.string(), z.any()).optional(),
+  }),
+});
+
+export const createTableSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    tableColumns: z
+      .array(
+        z.object({
+          name: z.string().min(1).max(63),
+          type: z.string().min(1),
+          constraints: z.string().optional(),
+        }),
+      )
+      .min(1),
+  }),
+});
+
+export const deleteTableSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+  }),
+});
+
+export const getColumnsSchema = z.object({
+  query: z.object({
+    tableName: z.string().min(1, "Table name is required"),
+  }),
+});
