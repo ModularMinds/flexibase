@@ -23,6 +23,10 @@ export const deleteTableController = async (
   try {
     await prisma.$executeRawUnsafe(deleteTableQuery);
 
+    // Delete metadata
+    const deleteMetadataQuery = `DELETE FROM "_flexibase_table_metadata" WHERE tablename = $1`;
+    await prisma.$executeRawUnsafe(deleteMetadataQuery, tableName);
+
     res.status(200).json({
       isSuccess: true,
       message: `Table '${tableName}' deleted successfully.`,

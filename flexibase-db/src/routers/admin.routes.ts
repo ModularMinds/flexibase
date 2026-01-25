@@ -4,17 +4,21 @@ import {
   deleteTableController,
   getAllTablesController,
   getTableColumnsController,
+  alterTableController,
+  createIndexController,
 } from "../controllers";
 import { roleCheck, tokenVerifier, validateResource } from "../middlewares";
 import {
   createTableSchema,
   deleteTableSchema,
   getColumnsSchema,
+  alterTableSchema,
+  createIndexSchema,
 } from "../schemas/db.schema";
 
 const router = Router();
 
-router.use(tokenVerifier, roleCheck(["ADMIN"]));
+router.use(tokenVerifier);
 
 /**
  * @openapi
@@ -56,81 +60,37 @@ router.use(tokenVerifier, roleCheck(["ADMIN"]));
  */
 router.post(
   "/create-table",
+  roleCheck(["ADMIN"]),
   validateResource(createTableSchema),
   createTableController,
 );
-/**
- * @openapi
- * /db/admin/delete-table:
- *   delete:
- *     tags:
- *       - Admin
- *     summary: Delete a database table
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - tableName
- *             properties:
- *               tableName:
- *                 type: string
- *     responses:
- *       200:
- *         description: Table deleted successfully
- *       401:
- *         description: Unauthorized
- */
+
 router.delete(
   "/delete-table",
+  roleCheck(["ADMIN"]),
   validateResource(deleteTableSchema),
   deleteTableController,
 );
-/**
- * @openapi
- * /db/admin/get-tables:
- *   get:
- *     tags:
- *       - Admin
- *     summary: Get all tables in the public schema
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: List of tables
- *       401:
- *         description: Unauthorized
- */
-router.get("/get-tables", getAllTablesController);
-/**
- * @openapi
- * /db/admin/get-columns:
- *   get:
- *     tags:
- *       - Admin
- *     summary: Get columns for a specific table
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: tableName
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: List of columns
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Table not found
- */
+
+router.patch(
+  "/alter-table",
+  roleCheck(["ADMIN"]),
+  validateResource(alterTableSchema),
+  alterTableController,
+);
+
+router.post(
+  "/create-index",
+  roleCheck(["ADMIN"]),
+  validateResource(createIndexSchema),
+  createIndexController,
+);
+
+router.get("/get-tables", roleCheck(["USER", "ADMIN"]), getAllTablesController);
+
 router.get(
   "/get-columns",
+  roleCheck(["USER", "ADMIN"]),
   validateResource(getColumnsSchema),
   getTableColumnsController,
 );

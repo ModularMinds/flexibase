@@ -15,6 +15,14 @@ export const errorHandler = (
     return;
   }
 
+  if (err.message.startsWith("Forbidden")) {
+    res.status(403).json({
+      isSuccess: false,
+      err: err.message,
+    });
+    return;
+  }
+
   console.error("Unhandled Error:", err);
 
   res.status(500).json({

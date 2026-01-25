@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
+import { validateTableAccess } from "../utils/accessControl";
 
 export const deleteDataController = async (
   req: Request,
@@ -8,18 +9,22 @@ export const deleteDataController = async (
   next: NextFunction,
 ) => {
   const { tableName, conditions } = req.body;
-
-  const quotedTableName = `"${tableName.replace(/"/g, '""')}"`;
-  const conditionKeys = Object.keys(conditions);
-  const conditionValues = Object.values(conditions);
-
-  const conditionClauses = conditionKeys
-    .map((key, index) => `"${key.replace(/"/g, '""')}" = $${index + 1}`)
-    .join(" AND ");
-
-  const deleteQuery = `DELETE FROM ${quotedTableName} WHERE ${conditionClauses}`;
+  const user = (req as any).user;
 
   try {
+    // Check table level access
+    await validateTableAccess(tableName, user.role);
+
+    const quotedTableName = `"${tableName.replace(/"/g, '""')}"`;
+    const conditionKeys = Object.keys(conditions);
+    const conditionValues = Object.values(conditions);
+
+    const conditionClauses = conditionKeys
+      .map((key, index) => `"${key.replace(/"/g, '""')}" = $${index + 1}`)
+      .join(" AND ");
+
+    const deleteQuery = `DELETE FROM ${quotedTableName} WHERE ${conditionClauses}`;
+
     const result = await prisma.$executeRawUnsafe(
       deleteQuery,
       ...conditionValues,

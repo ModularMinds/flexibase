@@ -7,7 +7,20 @@ export const getAllTablesController = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const query = `SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public'`;
+  const user = (req as any).user;
+  const isAdmin = user?.role === "ADMIN";
+
+  let query = `
+    SELECT t.tablename 
+    FROM pg_catalog.pg_tables t
+    LEFT JOIN "_flexibase_table_metadata" m ON t.tablename = m.tablename
+    WHERE t.schemaname = 'public'
+    AND t.tablename != '_flexibase_table_metadata'
+  `;
+
+  if (!isAdmin) {
+    query += ` AND (m.is_admin_only IS NULL OR m.is_admin_only = FALSE)`;
+  }
 
   try {
     const results: any[] = await prisma.$queryRawUnsafe(query);

@@ -63,6 +63,19 @@ export const createTableController = async (
 
     await prisma.$executeRawUnsafe(createTableQuery);
 
+    // Store metadata
+    const { isAdminOnly } = req.body;
+    const insertMetadataQuery = `
+      INSERT INTO "_flexibase_table_metadata" (tablename, is_admin_only)
+      VALUES ($1, $2)
+      ON CONFLICT (tablename) DO UPDATE SET is_admin_only = EXCLUDED.is_admin_only
+    `;
+    await prisma.$executeRawUnsafe(
+      insertMetadataQuery,
+      tableName,
+      isAdminOnly || false,
+    );
+
     res.status(201).json({
       isSuccess: true,
       message: `Table '${tableName}' created successfully.`,

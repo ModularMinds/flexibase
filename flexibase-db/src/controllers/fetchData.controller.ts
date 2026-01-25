@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
+import { validateTableAccess } from "../utils/accessControl";
 
 const OPERATOR_MAP: Record<string, string> = {
   eq: "=",
@@ -19,8 +20,12 @@ export const fetchDataController = async (
   next: NextFunction,
 ) => {
   const { tableName, columns, filters, sort, limit, offset } = req.body;
+  const user = (req as any).user;
 
   try {
+    // Check table level access
+    await validateTableAccess(tableName, user.role);
+
     // 1. SELECT clause (Projections)
     let selectClause = "*";
     if (Array.isArray(columns) && columns.length > 0) {

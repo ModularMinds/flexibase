@@ -14,6 +14,7 @@ import {
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.config";
 import { logger } from "./config/logger";
+import { initializeDatabase } from "./dbInit";
 
 export const app = express();
 
@@ -61,30 +62,40 @@ app.get("/api/db/service-check", (_, res) => {
 app.use(errorHandler);
 
 if (process.env.NODE_ENV !== "test") {
-  const server = app.listen(env.FLEXIBASE_DB_EXPOSE_PORT, () => {
-    logger.info(
-      `Flexibase DB started successfully on port ${env.FLEXIBASE_DB_EXPOSE_PORT}`,
-    );
-  });
+  const startServer = async () => {
+    try {
+      await initializeDatabase();
+      const server = app.listen(env.FLEXIBASE_DB_EXPOSE_PORT, () => {
+        logger.info(
+          `Flexibase DB started successfully on port ${env.FLEXIBASE_DB_EXPOSE_PORT}`,
+        );
+      });
 
-  const shutdown = async () => {
-    logger.info("Service is shutting down...");
-    server.close(async () => {
-      logger.info("Express server closed.");
-      // Prisma disconnect will happen naturally on process exit,
-      // but we could explicitly call it if we exported the client.
-      process.exit(0);
-    });
+      const shutdown = async () => {
+        logger.info("Service is shutting down...");
+        server.close(async () => {
+          logger.info("Express server closed.");
+          process.exit(0);
+        });
 
-    // Force shutdown if it takes too long
-    setTimeout(() => {
+        setTimeout(() => {
+          logger.error(
+            "Could not close connections in time, forcefully shutting down",
+          );
+          process.exit(1);
+        }, 10000);
+      };
+
+      process.on("SIGTERM", shutdown);
+      process.on("SIGINT", shutdown);
+    } catch (err) {
       logger.error(
-        "Could not close connections in time, forcefully shutting down",
+        "Failed to start server due to database initialization failure:",
+        err,
       );
       process.exit(1);
-    }, 10000);
+    }
   };
 
-  process.on("SIGTERM", shutdown);
-  process.on("SIGINT", shutdown);
+  startServer();
 }

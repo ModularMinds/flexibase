@@ -47,6 +47,7 @@ export const fetchDataSchema = z.object({
 export const createTableSchema = z.object({
   body: z.object({
     tableName: z.string().min(1, "Table name is required").max(63),
+    isAdminOnly: z.boolean().optional().default(false),
     tableColumns: z
       .array(
         z.object({
@@ -109,5 +110,29 @@ export const upsertDataSchema = z.object({
     conflictColumns: z
       .array(z.string())
       .min(1, "At least one conflict column is required"),
+  }),
+});
+
+export const alterTableSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    action: z.enum(["ADD", "DROP", "TOGGLE_ADMIN_ONLY"]),
+    isAdminOnly: z.boolean().optional(),
+    column: z
+      .object({
+        name: z.string().min(1).max(63),
+        type: z.string().min(1).optional(), // Optional for DROP
+        constraints: z.string().optional(),
+      })
+      .optional(),
+  }),
+});
+
+export const createIndexSchema = z.object({
+  body: z.object({
+    tableName: z.string().min(1, "Table name is required").max(63),
+    indexName: z.string().min(1).max(63),
+    columns: z.array(z.string().min(1)).min(1),
+    unique: z.boolean().default(false),
   }),
 });
