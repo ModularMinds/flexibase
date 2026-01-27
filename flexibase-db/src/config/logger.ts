@@ -1,9 +1,10 @@
 import winston from "winston";
 
-const { combine, timestamp, printf, colorize } = winston.format;
+const { combine, timestamp, printf, colorize, metadata } = winston.format;
 
-const logFormat = printf(({ level, message, timestamp }) => {
-  return `${timestamp} ${level}: ${message}`;
+const logFormat = printf(({ level, message, timestamp, requestId }) => {
+  const rid = requestId ? ` [${requestId}]` : "";
+  return `${timestamp}${rid} ${level}: ${message}`;
 });
 
 export const logger = winston.createLogger({

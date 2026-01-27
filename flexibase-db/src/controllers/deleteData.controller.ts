@@ -6,12 +6,12 @@ import { logAudit } from "../utils/auditLogger";
 import { triggerWebhooks } from "../utils/webhookTrigger";
 import { cacheService } from "../services/cache.service";
 
-export const insertDataController = async (
+export const deleteDataController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const { tableName, data } = req.body;
+  const { tableName, conditions } = req.body;
   const user = (req as any).user;
 
   try {
@@ -19,37 +19,39 @@ export const insertDataController = async (
     await validateTableAccess(tableName, user.role);
 
     const quotedTableName = `"${tableName.replace(/"/g, '""')}"`;
-    const keys = Object.keys(data);
-    const values = Object.values(data);
+    const conditionKeys = Object.keys(conditions);
+    const conditionValues = Object.values(conditions);
 
-    const quotedColumns = keys
-      .map((key) => `"${key.replace(/"/g, '""')}"`)
-      .join(", ");
-    const placeholders = values.map((_, index) => `$${index + 1}`).join(", ");
+    const conditionClauses = conditionKeys
+      .map((key, index) => `"${key.replace(/"/g, '""')}" = $${index + 1}`)
+      .join(" AND ");
 
-    const insertQuery = `INSERT INTO ${quotedTableName} (${quotedColumns}) VALUES (${placeholders})`;
+    const deleteQuery = `DELETE FROM ${quotedTableName} WHERE ${conditionClauses}`;
 
-    await prisma.$executeRawUnsafe(insertQuery, ...values);
+    const result = await prisma.$executeRawUnsafe(
+      deleteQuery,
+      ...conditionValues,
+    );
 
     // Audit Log
     if (user) {
-      await logAudit(user.id, "INSERT", tableName, undefined, {
-        data,
+      await logAudit(user.id, "DELETE", tableName, undefined, {
+        conditions,
       });
     }
 
     // Trigger Webhooks
-    triggerWebhooks("INSERT", { tableName, data });
+    triggerWebhooks("DELETE", { tableName, conditions });
 
     // Invalidate Cache
     await cacheService.invalidatePattern(`data:${tableName}:*`);
 
-    res.status(201).json({
+    res.status(200).json({
       isSuccess: true,
-      message: `Data inserted into table '${tableName}' successfully.`,
+      message: `Deleted ${result} row(s) from table '${tableName}'.`,
     });
   } catch (err: any) {
-    logger.error("Error inserting data:", err);
+    logger.error("Error deleting data:", err);
     next(err);
   }
 };

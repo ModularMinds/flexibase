@@ -1,12 +1,12 @@
 import swaggerJsdoc from "swagger-jsdoc";
 
-const options = {
+const options: swaggerJsdoc.Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "FlexiBase Auth API",
+      title: "Flexibase DB API",
       version: "1.0.0",
-      description: "Authentication Service for FlexiBase",
+      description: "API for dynamic database management and CRUD operations",
     },
     servers: [
       {
@@ -24,7 +24,7 @@ const options = {
       },
     },
   },
-  apis: ["./src/routers/*.ts", "./src/app.ts"], // Files containing annotations
+  apis: ["./src/routers/*.ts", "./src/controllers/*.ts"], // Path to the API docs
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

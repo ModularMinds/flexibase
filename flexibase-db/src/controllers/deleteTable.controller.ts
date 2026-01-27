@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
+import { logAudit } from "../utils/auditLogger";
+import { triggerWebhooks } from "../utils/webhookTrigger";
+import { cacheService } from "../services/cache.service";
 
 export const deleteTableController = async (
   req: Request,
@@ -23,6 +26,24 @@ export const deleteTableController = async (
   try {
     await prisma.$executeRawUnsafe(deleteTableQuery);
 
+    // Delete metadata
+    const deleteMetadataQuery = `DELETE FROM "_flexibase_table_metadata" WHERE tablename = $1`;
+    await prisma.$executeRawUnsafe(deleteMetadataQuery, tableName);
+
+    // Audit Log
+    const user = (req as any).user;
+    if (user) {
+      await logAudit(user.id, "DELETE_TABLE", tableName);
+    }
+
+    // Trigger Webhooks
+    triggerWebhooks("DELETE_TABLE", { tableName });
+
+    // Invalidate Caches
+    await cacheService.invalidatePattern("tables:all");
+    await cacheService.invalidatePattern(`data:${tableName}:*`);
+    await cacheService.invalidatePattern(`columns:${tableName}`);
+
     res.status(200).json({
       isSuccess: true,
       message: `Table '${tableName}' deleted successfully.`,
@@ -30,10 +51,7 @@ export const deleteTableController = async (
     return;
   } catch (err: any) {
     logger.error("Error deleting table:", err);
-    res.status(500).json({
-      isSuccess: false,
-      error: err.message,
-    });
+    next(err);
     return;
   }
 };

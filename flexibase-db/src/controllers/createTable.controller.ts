@@ -1,6 +1,32 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
+import { logAudit } from "../utils/auditLogger";
+import { triggerWebhooks } from "../utils/webhookTrigger";
+import { cacheService } from "../services/cache.service";
+
+const POSTGRES_TYPES_WHITELIST = [
+  "SERIAL",
+  "SMALLSERIAL",
+  "BIGSERIAL",
+  "INTEGER",
+  "BIGINT",
+  "SMALLINT",
+  "DECIMAL",
+  "NUMERIC",
+  "REAL",
+  "DOUBLE PRECISION",
+  "BOOLEAN",
+  "CHAR",
+  "VARCHAR",
+  "TEXT",
+  "DATE",
+  "TIMESTAMP",
+  "TIMESTAMPTZ",
+  "JSON",
+  "JSONB",
+  "UUID",
+];
 
 export const createTableController = async (
   req: Request,
@@ -25,9 +51,13 @@ export const createTableController = async (
           throw new Error("Each column must have a name and a type.");
 
         const quotedColName = `"${column.name.replace(/"/g, '""')}"`;
-        // We can't easily quote types/constraints in a standard way without a whitelist,
-        // but since this is an admin route, we rely on Basic Auth + some validation.
-        // For robustness, we should ideally whitelist types.
+
+        // Type safety: Whitelist check
+        const baseType = column.type.split("(")[0].toUpperCase().trim();
+        if (!POSTGRES_TYPES_WHITELIST.includes(baseType)) {
+          throw new Error(`Unsupported or unsafe column type: ${column.type}`);
+        }
+
         return `${quotedColName} ${column.type} ${column.constraints || ""}`.trim();
       })
       .join(", ");
@@ -36,6 +66,34 @@ export const createTableController = async (
 
     await prisma.$executeRawUnsafe(createTableQuery);
 
+    // Store metadata
+    const { isAdminOnly } = req.body;
+    const insertMetadataQuery = `
+      INSERT INTO "_flexibase_table_metadata" (tablename, is_admin_only)
+      VALUES ($1, $2)
+      ON CONFLICT (tablename) DO UPDATE SET is_admin_only = EXCLUDED.is_admin_only
+    `;
+    await prisma.$executeRawUnsafe(
+      insertMetadataQuery,
+      tableName,
+      isAdminOnly || false,
+    );
+
+    // Audit Log
+    const user = (req as any).user;
+    if (user) {
+      await logAudit(user.id, "CREATE_TABLE", tableName, undefined, {
+        columns: tableColumns,
+        isAdminOnly,
+      });
+    }
+
+    // Trigger Webhooks
+    triggerWebhooks("CREATE_TABLE", { tableName, tableColumns });
+
+    // Invalidate Cache
+    await cacheService.invalidatePattern("tables:all");
+
     res.status(201).json({
       isSuccess: true,
       message: `Table '${tableName}' created successfully.`,
@@ -43,7 +101,7 @@ export const createTableController = async (
     return;
   } catch (err: any) {
     logger.error("Error creating table:", err);
-    res.status(500).json({ isSuccess: false, error: err.message });
+    next(err);
     return;
   }
 };
