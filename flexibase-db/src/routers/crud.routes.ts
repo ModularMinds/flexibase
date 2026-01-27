@@ -7,6 +7,7 @@ import {
   upsertDataController,
   importDataController,
   exportDataController,
+  batchTransactionController,
 } from "../controllers";
 import { roleCheck, tokenVerifier, validateResource } from "../middlewares";
 import { upload } from "../config/upload.config";
@@ -16,6 +17,7 @@ import {
   updateDataSchema,
   deleteDataSchema,
   upsertDataSchema,
+  transactionSchema,
 } from "../schemas/db.schema";
 
 const router = Router();
@@ -244,6 +246,59 @@ router.get(
   roleCheck(["ADMIN"]),
   // validateResource(exportDataSchema) - query validation
   exportDataController,
+);
+
+/**
+ * @openapi
+ * /db/crud/transaction:
+ *   post:
+ *     tags:
+ *       - CRUD
+ *     summary: Execute a batch transaction
+ *     description: Execute multiple operations (INSERT, UPDATE, DELETE) atomically.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - operations
+ *             properties:
+ *               operations:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - type
+ *                     - tableName
+ *                   properties:
+ *                     type:
+ *                       type: string
+ *                       enum: [INSERT, UPDATE, DELETE]
+ *                     tableName:
+ *                       type: string
+ *                     data:
+ *                       type: object
+ *                       description: Required for INSERT/UPDATE
+ *                     conditions:
+ *                       type: object
+ *                       description: Required for UPDATE/DELETE
+ *     responses:
+ *       200:
+ *         description: Transaction executed successfully
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Transaction failed
+ */
+router.post(
+  "/transaction",
+  roleCheck(["ADMIN", "USER"]), // Allow users with access
+  validateResource(transactionSchema),
+  batchTransactionController,
 );
 
 export { router as crudRouter };

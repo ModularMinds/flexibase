@@ -174,3 +174,18 @@ export const createIndexSchema = z.object({
     unique: z.boolean().default(false),
   }),
 });
+
+export const transactionSchema = z.object({
+  body: z.object({
+    operations: z
+      .array(
+        z.object({
+          type: z.enum(["INSERT", "UPDATE", "DELETE"]),
+          tableName: z.string().min(1),
+          data: z.record(z.string(), z.any()).optional(),
+          conditions: z.record(z.string(), z.any()).optional(),
+        }),
+      )
+      .min(1, "At least one operation is required"),
+  }),
+});

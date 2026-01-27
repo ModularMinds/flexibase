@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 
+import { cacheService } from "../services/cache.service";
+
 export const getAllTablesController = async (
   req: Request,
   res: Response,
@@ -22,13 +24,29 @@ export const getAllTablesController = async (
     query += ` AND (m.is_admin_only IS NULL OR m.is_admin_only = FALSE)`;
   }
 
+  // ... inside controller
   try {
+    // Cache Check
+    const cachedTables = await cacheService.get("tables:all");
+    if (cachedTables) {
+      res.status(200).json({
+        isSuccess: true,
+        tables: cachedTables,
+        source: "cache",
+      });
+      return;
+    }
+
     const results: any[] = await prisma.$queryRawUnsafe(query);
     const tables = results.map((row: any) => row.tablename);
+
+    // Set Cache
+    await cacheService.set("tables:all", tables, 300);
 
     res.status(200).json({
       isSuccess: true,
       tables,
+      source: "database",
     });
     return;
   } catch (err: any) {

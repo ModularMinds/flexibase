@@ -3,6 +3,7 @@ import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 import { logAudit } from "../utils/auditLogger";
 import { triggerWebhooks } from "../utils/webhookTrigger";
+import { cacheService } from "../services/cache.service";
 
 export const alterTableController = async (
   req: Request,
@@ -71,6 +72,10 @@ export const alterTableController = async (
         action,
         column: req.body.column,
       });
+
+      // Invalidate Cache
+      await cacheService.invalidatePattern(`columns:${tableName}`);
+      await cacheService.invalidatePattern(`data:${tableName}:*`);
 
       res.status(200).json({
         isSuccess: true,

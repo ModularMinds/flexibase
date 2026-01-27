@@ -18,6 +18,20 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  
+  redis:
+    image: redis:alpine
+    container_name: flexibase-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - flexibase-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   flexibase-db:
     build: 
@@ -32,8 +46,11 @@ services:
       FLEXIBASE_ADMIN_USER: ${FLEXIBASE_ADMIN_USER}
       FLEXIBASE_ADMIN_PASSWORD: ${FLEXIBASE_ADMIN_PASSWORD}
       DATABASE_URL: postgresql://${FLEXIBASE_ADMIN_USER}:${FLEXIBASE_ADMIN_PASSWORD}@postgres:5432/${DB_NAME}
+      REDIS_URL: redis://redis:6379
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - flexibase-network

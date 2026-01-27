@@ -3,6 +3,7 @@ import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 import { logAudit } from "../utils/auditLogger";
 import { triggerWebhooks } from "../utils/webhookTrigger";
+import { cacheService } from "../services/cache.service";
 
 export const deleteTableController = async (
   req: Request,
@@ -37,6 +38,11 @@ export const deleteTableController = async (
 
     // Trigger Webhooks
     triggerWebhooks("DELETE_TABLE", { tableName });
+
+    // Invalidate Caches
+    await cacheService.invalidatePattern("tables:all");
+    await cacheService.invalidatePattern(`data:${tableName}:*`);
+    await cacheService.invalidatePattern(`columns:${tableName}`);
 
     res.status(200).json({
       isSuccess: true,

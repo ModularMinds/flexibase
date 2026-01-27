@@ -15,6 +15,7 @@ import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger.config";
 import { logger } from "./config/logger";
 import { initializeDatabase } from "./dbInit";
+import { connectRedis } from "./config/redis";
 
 export const app = express();
 
@@ -64,6 +65,7 @@ app.use(errorHandler);
 if (process.env.NODE_ENV !== "test") {
   const startServer = async () => {
     try {
+      await connectRedis();
       await initializeDatabase();
       const server = app.listen(env.FLEXIBASE_DB_EXPOSE_PORT, () => {
         logger.info(

@@ -7,6 +7,7 @@ export * from "./getAuditLogs.controller";
 export * from "./importData.controller";
 export * from "./exportData.controller";
 export * from "./webhooks.controller";
+export * from "./transaction.controller";
 
 export * from "./insertData.controller";
 export * from "./updateData.controller";

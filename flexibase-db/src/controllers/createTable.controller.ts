@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 import { logAudit } from "../utils/auditLogger";
+import { triggerWebhooks } from "../utils/webhookTrigger";
+import { cacheService } from "../services/cache.service";
 
 const POSTGRES_TYPES_WHITELIST = [
   "SERIAL",
@@ -85,6 +87,12 @@ export const createTableController = async (
         isAdminOnly,
       });
     }
+
+    // Trigger Webhooks
+    triggerWebhooks("CREATE_TABLE", { tableName, tableColumns });
+
+    // Invalidate Cache
+    await cacheService.invalidatePattern("tables:all");
 
     res.status(201).json({
       isSuccess: true,

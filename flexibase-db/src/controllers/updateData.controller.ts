@@ -4,6 +4,7 @@ import { logger } from "../config/logger";
 import { validateTableAccess } from "../utils/accessControl";
 import { logAudit } from "../utils/auditLogger";
 import { triggerWebhooks } from "../utils/webhookTrigger";
+import { cacheService } from "../services/cache.service";
 
 export const updateDataController = async (
   req: Request,
@@ -51,6 +52,9 @@ export const updateDataController = async (
 
     // Trigger Webhooks
     triggerWebhooks("UPDATE", { tableName, data, conditions });
+
+    // Invalidate Cache
+    await cacheService.invalidatePattern(`data:${tableName}:*`);
 
     res.status(200).json({
       isSuccess: true,
