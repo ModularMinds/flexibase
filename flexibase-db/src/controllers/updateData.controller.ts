@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 import { validateTableAccess } from "../utils/accessControl";
+import { logAudit } from "../utils/auditLogger";
+import { triggerWebhooks } from "../utils/webhookTrigger";
 
 export const updateDataController = async (
   req: Request,
@@ -38,6 +40,17 @@ export const updateDataController = async (
     const allValues = [...setValues, ...conditionValues];
 
     const result = await prisma.$executeRawUnsafe(updateQuery, ...allValues);
+
+    // Audit Log
+    if (user) {
+      await logAudit(user.id, "UPDATE", tableName, undefined, {
+        data,
+        conditions,
+      });
+    }
+
+    // Trigger Webhooks
+    triggerWebhooks("UPDATE", { tableName, data, conditions });
 
     res.status(200).json({
       isSuccess: true,

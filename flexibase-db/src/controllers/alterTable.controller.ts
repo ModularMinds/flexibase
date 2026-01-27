@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
+import { logAudit } from "../utils/auditLogger";
+import { triggerWebhooks } from "../utils/webhookTrigger";
 
 export const alterTableController = async (
   req: Request,
@@ -39,6 +41,13 @@ export const alterTableController = async (
         isAdminOnly,
       );
 
+      const user = (req as any).user;
+      if (user) {
+        await logAudit(user.id, "ALTER_TABLE_ACCESS", tableName, undefined, {
+          isAdminOnly,
+        });
+      }
+
       res.status(200).json({
         isSuccess: true,
         message: `Table '${tableName}' admin-only status updated to ${isAdminOnly}.`,
@@ -48,12 +57,33 @@ export const alterTableController = async (
 
     if (alterQuery) {
       await prisma.$executeRawUnsafe(alterQuery);
-    }
+      // Audit Log
+      const user = (req as any).user;
+      if (user) {
+        await logAudit(user.id, "ALTER_TABLE", tableName, undefined, {
+          rawParams: req.body,
+        });
+      }
 
-    res.status(200).json({
-      isSuccess: true,
-      message: `Table '${tableName}' altered successfully: ${action} column '${column.name}'.`,
-    });
+      // Trigger Webhooks
+      triggerWebhooks("ALTER_TABLE", {
+        tableName,
+        action,
+        column: req.body.column,
+      });
+
+      res.status(200).json({
+        isSuccess: true,
+        message: `Table '${tableName}' altered successfully.`,
+      });
+    } else {
+      // If alterQuery is empty, it means no recognized action was performed.
+      // This case should ideally be caught earlier by validation, but as a fallback:
+      res.status(400).json({
+        isSuccess: false,
+        message: "Invalid or unsupported alter table action.",
+      });
+    }
   } catch (err: any) {
     logger.error("Error altering table:", err);
     next(err);

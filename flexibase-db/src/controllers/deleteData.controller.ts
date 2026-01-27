@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 import { validateTableAccess } from "../utils/accessControl";
+import { logAudit } from "../utils/auditLogger";
+import { triggerWebhooks } from "../utils/webhookTrigger";
 
 export const deleteDataController = async (
   req: Request,
@@ -29,6 +31,16 @@ export const deleteDataController = async (
       deleteQuery,
       ...conditionValues,
     );
+
+    // Audit Log
+    if (user) {
+      await logAudit(user.id, "DELETE", tableName, undefined, {
+        conditions,
+      });
+    }
+
+    // Trigger Webhooks
+    triggerWebhooks("DELETE", { tableName, conditions });
 
     res.status(200).json({
       isSuccess: true,

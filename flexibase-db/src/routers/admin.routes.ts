@@ -6,6 +6,11 @@ import {
   getTableColumnsController,
   alterTableController,
   createIndexController,
+  getAuditLogsController,
+  createWebhookController,
+  listWebhooksController,
+  updateWebhookController,
+  deleteWebhookController,
 } from "../controllers";
 import { roleCheck, tokenVerifier, validateResource } from "../middlewares";
 import {
@@ -14,6 +19,10 @@ import {
   getColumnsSchema,
   alterTableSchema,
   createIndexSchema,
+  getAuditLogsSchema,
+  createWebhookSchema,
+  updateWebhookSchema,
+  deleteWebhookSchema,
 } from "../schemas/db.schema";
 
 const router = Router();
@@ -93,6 +102,37 @@ router.get(
   roleCheck(["USER", "ADMIN"]),
   validateResource(getColumnsSchema),
   getTableColumnsController,
+);
+
+router.get(
+  "/get-audit-logs",
+  roleCheck(["ADMIN"]),
+  validateResource(getAuditLogsSchema),
+  getAuditLogsController,
+);
+
+// Webhooks
+router.post(
+  "/webhooks",
+  roleCheck(["ADMIN"]),
+  validateResource(createWebhookSchema),
+  createWebhookController,
+);
+
+router.get("/webhooks", roleCheck(["ADMIN"]), listWebhooksController);
+
+router.patch(
+  "/webhooks/:id",
+  roleCheck(["ADMIN"]),
+  validateResource(updateWebhookSchema),
+  updateWebhookController,
+);
+
+router.delete(
+  "/webhooks/:id",
+  roleCheck(["ADMIN"]),
+  validateResource(deleteWebhookSchema),
+  deleteWebhookController,
 );
 
 export { router as adminRouter };

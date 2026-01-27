@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 import { validateTableAccess } from "../utils/accessControl";
+import { logAudit } from "../utils/auditLogger";
 
 export const upsertDataController = async (
   req: Request,
@@ -43,6 +44,14 @@ export const upsertDataController = async (
     `;
 
     await prisma.$executeRawUnsafe(upsertQuery, ...values);
+
+    // Audit Log
+    if (user) {
+      await logAudit(user.id, "UPSERT", tableName, undefined, {
+        conflictColumns,
+        // data: data // Optional
+      });
+    }
 
     res.status(200).json({
       isSuccess: true,

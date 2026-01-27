@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
 import { validateTableAccess } from "../utils/accessControl";
+import { logAudit } from "../utils/auditLogger";
+import { triggerWebhooks } from "../utils/webhookTrigger";
 
 export const insertDataController = async (
   req: Request,
@@ -27,6 +29,16 @@ export const insertDataController = async (
     const insertQuery = `INSERT INTO ${quotedTableName} (${quotedColumns}) VALUES (${placeholders})`;
 
     await prisma.$executeRawUnsafe(insertQuery, ...values);
+
+    // Audit Log
+    if (user) {
+      await logAudit(user.id, "INSERT", tableName, undefined, {
+        data,
+      });
+    }
+
+    // Trigger Webhooks
+    triggerWebhooks("INSERT", { tableName, data });
 
     res.status(201).json({
       isSuccess: true,

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
+import { logAudit } from "../utils/auditLogger";
 
 const POSTGRES_TYPES_WHITELIST = [
   "SERIAL",
@@ -75,6 +76,15 @@ export const createTableController = async (
       tableName,
       isAdminOnly || false,
     );
+
+    // Audit Log
+    const user = (req as any).user;
+    if (user) {
+      await logAudit(user.id, "CREATE_TABLE", tableName, undefined, {
+        columns: tableColumns,
+        isAdminOnly,
+      });
+    }
 
     res.status(201).json({
       isSuccess: true,

@@ -5,8 +5,11 @@ import {
   updateDataController,
   deleteDataController,
   upsertDataController,
+  importDataController,
+  exportDataController,
 } from "../controllers";
 import { roleCheck, tokenVerifier, validateResource } from "../middlewares";
+import { upload } from "../config/upload.config";
 import {
   insertDataSchema,
   fetchDataSchema,
@@ -226,6 +229,21 @@ router.post(
   "/upsert-data",
   validateResource(upsertDataSchema),
   upsertDataController,
+);
+
+router.post(
+  "/import-data",
+  upload.single("file"),
+  roleCheck(["ADMIN"]), // Restrict import to Admin or implement granular checks
+  // validateResource(importDataSchema) - manual validation for file + body
+  importDataController,
+);
+
+router.get(
+  "/export-data",
+  roleCheck(["ADMIN"]),
+  // validateResource(exportDataSchema) - query validation
+  exportDataController,
 );
 
 export { router as crudRouter };

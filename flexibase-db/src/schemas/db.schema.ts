@@ -72,6 +72,44 @@ export const getColumnsSchema = z.object({
   }),
 });
 
+export const getAuditLogsSchema = z.object({
+  query: z.object({
+    userId: z.string().optional(),
+    tableName: z.string().optional(),
+    action: z.string().optional(),
+    startDate: z.string().datetime().optional(),
+    endDate: z.string().datetime().optional(),
+    limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+    offset: z.string().regex(/^\d+$/).transform(Number).optional(),
+  }),
+});
+
+export const createWebhookSchema = z.object({
+  body: z.object({
+    event: z.string().min(1, "Event is required"),
+    targetUrl: z.string().url("Target URL must be valid"),
+    secret: z.string().optional(),
+  }),
+});
+
+export const updateWebhookSchema = z.object({
+  params: z.object({
+    id: z.string().uuid("Invalid Webhook ID"),
+  }),
+  body: z.object({
+    event: z.string().optional(),
+    targetUrl: z.string().url().optional(),
+    secret: z.string().optional(),
+    isActive: z.boolean().optional(),
+  }),
+});
+
+export const deleteWebhookSchema = z.object({
+  params: z.object({
+    id: z.string().uuid("Invalid Webhook ID"),
+  }),
+});
+
 export const updateDataSchema = z.object({
   body: z.object({
     tableName: z.string().min(1, "Table name is required").max(63),

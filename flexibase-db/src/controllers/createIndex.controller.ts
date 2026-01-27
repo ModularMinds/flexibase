@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/prisma";
 import { logger } from "../config/logger";
+import { logAudit } from "../utils/auditLogger";
 
 export const createIndexController = async (
   req: Request,
@@ -19,6 +20,16 @@ export const createIndexController = async (
     const createIndexQuery = `${unique ? "CREATE UNIQUE INDEX" : "CREATE INDEX"} ${quotedIndexName} ON ${quotedTableName} (${quotedColumns})`;
 
     await prisma.$executeRawUnsafe(createIndexQuery);
+
+    // Audit Log
+    const user = (req as any).user;
+    if (user) {
+      await logAudit(user.id, "CREATE_INDEX", tableName, undefined, {
+        indexName,
+        columns,
+        unique,
+      });
+    }
 
     res.status(201).json({
       isSuccess: true,
