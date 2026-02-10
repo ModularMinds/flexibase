@@ -24,7 +24,8 @@ app.get("/api/storage/service-check", (_, res) => {
 });
 
 // Swagger
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Swagger
+app.use("/docs", swaggerUi.serve as any, swaggerUi.setup(swaggerSpec) as any);
 
 // Error Handler
 app.use(errorHandler);

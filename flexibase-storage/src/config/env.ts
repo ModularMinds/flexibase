@@ -11,6 +11,11 @@ const envSchema = z.object({
     .default("development"),
   AUTH_SERVICE_URL: z.string().url(),
   STORAGE_BUCKET: z.string().default("flexibase_uploads"),
+
+  // MinIO
+  MINIO_ENDPOINT: z.string().url().default("http://localhost:9000"),
+  MINIO_ACCESS_KEY: z.string().default("minioadmin"),
+  MINIO_SECRET_KEY: z.string().default("minioadmin"),
 });
 
 export const env = envSchema.parse(process.env);

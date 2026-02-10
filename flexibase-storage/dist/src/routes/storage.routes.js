@@ -1,24 +1,14 @@
-import { Router } from "express";
-import {
-  uploadFileController,
-  getFileMetadataController,
-  getFileContentController,
-  deleteFileController,
-} from "../controllers/storage.controller";
-import { authDelegation, validateResource } from "../middlewares";
-import {
-  uploadFileSchema,
-  getFileSchema,
-  getFileContentSchema,
-  deleteFileSchema,
-} from "../schemas/storage.schema";
-import { upload } from "../middlewares/upload.middleware";
-
-export const storageRouter = Router();
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.storageRouter = void 0;
+const express_1 = require("express");
+const storage_controller_1 = require("../controllers/storage.controller");
+const middlewares_1 = require("../middlewares");
+const storage_schema_1 = require("../schemas/storage.schema");
+const upload_middleware_1 = require("../middlewares/upload.middleware");
+exports.storageRouter = (0, express_1.Router)();
 // Apply auth to all routes
-storageRouter.use(authDelegation);
-
+exports.storageRouter.use(middlewares_1.authDelegation);
 /**
  * @openapi
  * /upload:
@@ -48,13 +38,7 @@ storageRouter.use(authDelegation);
  *       401:
  *         description: Unauthorized
  */
-storageRouter.post(
-  "/upload",
-  upload.single("file") as any,
-  validateResource(uploadFileSchema) as any,
-  uploadFileController,
-);
-
+exports.storageRouter.post("/upload", upload_middleware_1.upload.single("file"), (0, middlewares_1.validateResource)(storage_schema_1.uploadFileSchema), storage_controller_1.uploadFileController);
 /**
  * @openapi
  * /files/{id}:
@@ -76,12 +60,7 @@ storageRouter.post(
  *       404:
  *         description: File not found
  */
-storageRouter.get(
-  "/files/:id",
-  validateResource(getFileSchema) as any,
-  getFileMetadataController,
-);
-
+exports.storageRouter.get("/files/:id", (0, middlewares_1.validateResource)(storage_schema_1.getFileSchema), storage_controller_1.getFileMetadataController);
 /**
  * @openapi
  * /files/{id}/content:
@@ -103,12 +82,7 @@ storageRouter.get(
  *       404:
  *         description: File not found
  */
-storageRouter.get(
-  "/files/:id/content",
-  validateResource(getFileContentSchema) as any,
-  getFileContentController,
-);
-
+exports.storageRouter.get("/files/:id/content", (0, middlewares_1.validateResource)(storage_schema_1.getFileContentSchema), storage_controller_1.getFileContentController);
 /**
  * @openapi
  * /files/{id}:
@@ -130,8 +104,4 @@ storageRouter.get(
  *       404:
  *         description: File not found
  */
-storageRouter.delete(
-  "/files/:id",
-  validateResource(deleteFileSchema) as any,
-  deleteFileController,
-);
+exports.storageRouter.delete("/files/:id", (0, middlewares_1.validateResource)(storage_schema_1.deleteFileSchema), storage_controller_1.deleteFileController);

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { storageService } from "../services/storage.service";
 import { logger } from "../config/logger";
+import { Readable } from "stream";
 
 export const uploadFileController = async (
   req: Request,
@@ -62,14 +63,31 @@ export const getFileContentController = async (
 ) => {
   try {
     const { id } = req.params;
-    const filePath = await storageService.getFileContentPath(id);
+    const stream = await storageService.getFileContentStream(id);
 
-    if (!filePath) {
-      res.status(404).json({ isSuccess: false, message: "File not found" });
+    if (!stream) {
+      res
+        .status(404)
+        .json({ isSuccess: false, message: "File not found or S3 error" });
       return;
     }
 
-    res.sendFile(filePath);
+    // Handle AWS SDK v3 stream type (Readable | ReadableStream | Blob)
+    // For Node.js, we expect Readable
+    if (stream instanceof Readable) {
+      stream.pipe(res);
+    } else {
+      // Best effort conversion or direct handling if it's a web stream (node 18+)
+      // @ts-ignore
+      if (typeof stream.pipe === "function") {
+        // @ts-ignore
+        stream.pipe(res);
+      } else {
+        // Fallback for ByteArray or other types (not common in Node environment for GetObject)
+        const bytes = await stream.transformToByteArray();
+        res.send(Buffer.from(bytes));
+      }
+    }
   } catch (err: any) {
     next(err);
   }
