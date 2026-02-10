@@ -16,6 +16,9 @@ const envSchema = z.object({
   MINIO_ENDPOINT: z.string().url().default("http://localhost:9000"),
   MINIO_ACCESS_KEY: z.string().default("minioadmin"),
   MINIO_SECRET_KEY: z.string().default("minioadmin"),
+
+  // Storage Quota
+  MAX_USER_STORAGE_BYTES: z.coerce.number().default(1073741824), // 1GB default
 });
 
 export const env = envSchema.parse(process.env);

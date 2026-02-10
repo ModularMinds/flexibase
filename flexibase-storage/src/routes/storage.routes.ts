@@ -4,20 +4,69 @@ import {
   getFileMetadataController,
   getFileContentController,
   deleteFileController,
+  getUploadUrlController,
+  getDownloadUrlController,
 } from "../controllers/storage.controller";
-import { authDelegation, validateResource } from "../middlewares";
+import {
+  authDelegation,
+  optionalAuth,
+  validateResource,
+  storageRateLimiter,
+  uploadRateLimiter,
+} from "../middlewares";
 import {
   uploadFileSchema,
   getFileSchema,
   getFileContentSchema,
   deleteFileSchema,
+  getUploadUrlSchema,
 } from "../schemas/storage.schema";
 import { upload } from "../middlewares/upload.middleware";
 
 export const storageRouter = Router();
 
-// Apply auth to all routes
-storageRouter.use(authDelegation);
+// Routes are now explicitly protected or optional
+
+/**
+ * @openapi
+ * /upload-url:
+ *   post:
+ *     tags:
+ *       - Storage
+ *     summary: Get presigned upload URL
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - originalName
+ *               - mimeType
+ *             properties:
+ *               bucket:
+ *                 type: string
+ *               originalName:
+ *                 type: string
+ *               mimeType:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Presigned URL generated
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ */
+storageRouter.post(
+  "/upload-url",
+  storageRateLimiter,
+  authDelegation,
+  validateResource(getUploadUrlSchema) as any,
+  getUploadUrlController,
+);
 
 /**
  * @openapi
@@ -25,7 +74,7 @@ storageRouter.use(authDelegation);
  *   post:
  *     tags:
  *       - Storage
- *     summary: Upload a file
+ *     summary: Upload a file (Multipart)
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -50,6 +99,8 @@ storageRouter.use(authDelegation);
  */
 storageRouter.post(
   "/upload",
+  uploadRateLimiter,
+  authDelegation,
   upload.single("file") as any,
   validateResource(uploadFileSchema) as any,
   uploadFileController,
@@ -78,8 +129,37 @@ storageRouter.post(
  */
 storageRouter.get(
   "/files/:id",
+  optionalAuth,
   validateResource(getFileSchema) as any,
   getFileMetadataController,
+);
+
+/**
+ * @openapi
+ * /files/{id}/url:
+ *   get:
+ *     tags:
+ *       - Storage
+ *     summary: Get presigned download URL
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Presigned URL generated
+ *       404:
+ *         description: File not found
+ */
+storageRouter.get(
+  "/files/:id/url",
+  optionalAuth,
+  validateResource(getFileSchema) as any,
+  getDownloadUrlController,
 );
 
 /**
@@ -105,6 +185,7 @@ storageRouter.get(
  */
 storageRouter.get(
   "/files/:id/content",
+  optionalAuth,
   validateResource(getFileContentSchema) as any,
   getFileContentController,
 );
@@ -132,6 +213,8 @@ storageRouter.get(
  */
 storageRouter.delete(
   "/files/:id",
+  storageRateLimiter,
+  authDelegation,
   validateResource(deleteFileSchema) as any,
   deleteFileController,
 );

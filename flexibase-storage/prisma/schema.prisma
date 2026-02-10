@@ -6,15 +6,22 @@ datasource db {
     provider = "postgresql"
 }
 
+enum FileVisibility {
+    PRIVATE
+    PUBLIC
+    SHARED
+}
+
 model File {
-    id           String   @id @default(uuid())
-    originalName String   @map("original_name")
-    mimeType     String   @map("mime_type")
+    id           String         @id @default(uuid())
+    originalName String         @map("original_name")
+    mimeType     String         @map("mime_type")
     size         Int
     path         String
     bucket       String
-    userId       String   @map("user_id")
-    createdAt    DateTime @default(now()) @map("created_at")
+    userId       String         @map("user_id")
+    visibility   FileVisibility @default(PRIVATE)
+    createdAt    DateTime       @default(now()) @map("created_at")
 
     @@map("files")
 }

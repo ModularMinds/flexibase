@@ -15,13 +15,14 @@ export const uploadFileController = async (
       return;
     }
 
-    const { bucket } = req.body;
+    const { bucket, visibility } = req.body;
     const user = (req as any).user;
 
     const result = await storageService.uploadFile(
       file,
       bucket || "default",
       user.id,
+      visibility,
     );
 
     res.status(201).json({
@@ -40,7 +41,8 @@ export const getFileMetadataController = async (
 ) => {
   try {
     const { id } = req.params;
-    const file = await storageService.getFileMetadata(id);
+    const user = (req as any).user;
+    const file = await storageService.getFileMetadata(id, user);
 
     if (!file) {
       res.status(404).json({ isSuccess: false, message: "File not found" });
@@ -63,13 +65,41 @@ export const getFileContentController = async (
 ) => {
   try {
     const { id } = req.params;
-    const stream = await storageService.getFileContentStream(id);
+    const { w, h, fmt } = req.query;
+    const user = (req as any).user;
+
+    let stream: any;
+    let contentType: string | undefined;
+
+    if (w || h || fmt) {
+      // Use optimization service
+      const result = await storageService.getOptimizedImage(
+        id,
+        {
+          width: w ? parseInt(w as string) : undefined,
+          height: h ? parseInt(h as string) : undefined,
+          format: fmt as any,
+        },
+        user,
+      );
+
+      if (result) {
+        stream = result.stream;
+        contentType = result.contentType;
+      }
+    } else {
+      stream = await storageService.getFileContentStream(id, user);
+    }
 
     if (!stream) {
       res
         .status(404)
         .json({ isSuccess: false, message: "File not found or S3 error" });
       return;
+    }
+
+    if (contentType) {
+      res.setHeader("Content-Type", contentType);
     }
 
     // Handle AWS SDK v3 stream type (Readable | ReadableStream | Blob)
@@ -100,11 +130,61 @@ export const deleteFileController = async (
 ) => {
   try {
     const { id } = req.params;
-    await storageService.deleteFile(id);
+    const user = (req as any).user;
+    await storageService.deleteFile(id, user);
 
     res.status(200).json({
       isSuccess: true,
       message: "File deleted successfully",
+    });
+  } catch (err: any) {
+    if (err.message === "File not found") {
+      res.status(404).json({ isSuccess: false, message: "File not found" });
+      return;
+    }
+    next(err);
+  }
+};
+
+export const getUploadUrlController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { bucket, originalName, mimeType, visibility } = req.body;
+    const user = (req as any).user;
+
+    const result = await storageService.generateUploadUrl(
+      bucket || "default",
+      originalName,
+      mimeType,
+      user.id,
+      visibility,
+    );
+
+    res.status(200).json({
+      isSuccess: true,
+      data: result,
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+export const getDownloadUrlController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+    const user = (req as any).user;
+    const result = await storageService.generateDownloadUrl(id, user);
+
+    res.status(200).json({
+      isSuccess: true,
+      data: result,
     });
   } catch (err: any) {
     if (err.message === "File not found") {

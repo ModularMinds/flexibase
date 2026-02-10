@@ -32,3 +32,288 @@
 [31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
 [31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
 2026-02-10 11:41:12:4112 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 12:03:01:31 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:129:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 12:03:08:38 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 12:03:09:39 [31merror[39m: [31mTypeError: Cannot read properties of undefined (reading 'endpointProvider')[39m
+[31m    at getSignedUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/@aws-sdk/s3-request-presigner/dist-cjs/index.js:71:30)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:147:35)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:127:20)[39m
+2026-02-10 12:07:18:718 [31merror[39m: [31mTypeError: Cannot read properties of undefined (reading 'endpointProvider')[39m
+[31m    at getSignedUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/@aws-sdk/s3-request-presigner/dist-cjs/index.js:71:30)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:147:35)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:127:20)[39m
+2026-02-10 12:07:48:748 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:133:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 12:07:50:750 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 13:28:36:2836 [31merror[39m: [31mError: CHECK_QUOTA_CALLED[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:32:11)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:68:26)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 13:31:07:317 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 19 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:42:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:54:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 13:31:08:318 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 0 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:42:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:157:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:127:20)[39m
+2026-02-10 13:31:26:3126 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:133:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 13:31:27:3127 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 13:31:31:3131 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 19 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:42:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:54:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 13:31:32:3132 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 0 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:42:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:157:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:127:20)[39m
+2026-02-10 13:37:24:3724 [31merror[39m: [31mError: Unauthorized access to file metadata[39m
+[31m    at Object.getFileMetadata (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:105:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileMetadataController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:45:18)[39m
+2026-02-10 13:37:27:3727 [31merror[39m: [31mError: Unauthorized to delete this file[39m
+[31m    at Object.deleteFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:147:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at deleteFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:107:5)[39m
+2026-02-10 13:37:42:3742 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:133:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 13:37:44:3744 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 13:37:48:3748 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 19 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:44:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:57:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 13:37:49:3749 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 0 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:44:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:178:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:131:20)[39m
+2026-02-10 13:37:51:3751 [31merror[39m: [31mError: Unauthorized access to file metadata[39m
+[31m    at Object.getFileMetadata (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:105:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileMetadataController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:45:18)[39m
+2026-02-10 13:37:53:3753 [31merror[39m: [31mError: Unauthorized to delete this file[39m
+[31m    at Object.deleteFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:147:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at deleteFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:107:5)[39m
+2026-02-10 13:39:27:3927 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:133:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 13:39:29:3929 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 13:39:33:3933 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 19 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:44:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:57:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 13:39:35:3935 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 0 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:44:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:178:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:131:20)[39m
+2026-02-10 13:39:37:3937 [31merror[39m: [31mError: Unauthorized access to file metadata[39m
+[31m    at Object.getFileMetadata (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:105:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileMetadataController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:45:18)[39m
+2026-02-10 13:39:39:3939 [31merror[39m: [31mError: Unauthorized to delete this file[39m
+[31m    at Object.deleteFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:147:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at deleteFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:107:5)[39m
+2026-02-10 14:13:28:1328 [31merror[39m: [31mError: File type not supported for optimization[39m
+[31m    at Object.getOptimizedImage (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:161:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileContentController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:76:22)[39m
+2026-02-10 14:13:44:1344 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:133:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 14:13:46:1346 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 14:13:50:1350 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 19 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:55:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:68:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 14:13:51:1351 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 0 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:55:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:260:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:158:20)[39m
+2026-02-10 14:13:52:1352 [31merror[39m: [31mError: Unauthorized access to file metadata[39m
+[31m    at Object.getFileMetadata (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:116:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileMetadataController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:45:18)[39m
+2026-02-10 14:13:55:1355 [31merror[39m: [31mError: Unauthorized to delete this file[39m
+[31m    at Object.deleteFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:229:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at deleteFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:134:5)[39m
+2026-02-10 14:13:56:1356 [31merror[39m: [31mError: File type not supported for optimization[39m
+[31m    at Object.getOptimizedImage (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:161:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileContentController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:76:22)[39m
+2026-02-10 14:18:32:1832 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:149:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 14:18:33:1833 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 14:18:37:1837 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 19 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:57:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:79:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 14:18:38:1838 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 0 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:57:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:296:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:158:20)[39m
+2026-02-10 14:18:40:1840 [31merror[39m: [31mError: Unauthorized access to file metadata[39m
+[31m    at Object.getFileMetadata (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:127:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileMetadataController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:45:18)[39m
+2026-02-10 14:18:43:1843 [31merror[39m: [31mError: Unauthorized to delete this file[39m
+[31m    at Object.deleteFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:240:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at deleteFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:134:5)[39m
+2026-02-10 14:18:44:1844 [31merror[39m: [31mError: File type not supported for optimization[39m
+[31m    at Object.getOptimizedImage (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:172:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileContentController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:76:22)[39m
+2026-02-10 14:20:46:2046 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:159:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 14:20:47:2047 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 14:20:51:2051 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 19 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:57:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.uploadFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:79:5)[39m
+[31m    at uploadFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:21:20)[39m
+2026-02-10 14:20:52:2052 [31merror[39m: [31mError: Storage quota exceeded. Limit: 1073741824 bytes, Usage: 1073741924 bytes, New File: 0 bytes[39m
+[31m    at Object.checkQuota (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:57:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at Object.generateUploadUrl (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:296:5)[39m
+[31m    at getUploadUrlController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:158:20)[39m
+2026-02-10 14:20:54:2054 [31merror[39m: [31mError: Unauthorized access to file metadata[39m
+[31m    at Object.getFileMetadata (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:127:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileMetadataController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:45:18)[39m
+2026-02-10 14:20:57:2057 [31merror[39m: [31mError: Unauthorized to delete this file[39m
+[31m    at Object.deleteFile (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:240:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at deleteFileController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:134:5)[39m
+2026-02-10 14:20:58:2058 [31merror[39m: [31mError: File type not supported for optimization[39m
+[31m    at Object.getOptimizedImage (/home/tanmayvaij/project/flexibase/flexibase-storage/src/services/storage.service.ts:172:13)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at getFileContentController (/home/tanmayvaij/project/flexibase/flexibase-storage/src/controllers/storage.controller.ts:76:22)[39m
