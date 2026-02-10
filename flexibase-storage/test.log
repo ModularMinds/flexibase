@@ -1,0 +1,83 @@
+
+> flexibase-storage@1.0.0 test
+> jest -t should reject upload if quota exceeded
+
+(node:40713) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  console.log
+    Test: Created dummy file bd1bec05-9e1a-4fb0-bce3-47d81874b5fd with size 1073741924 for user admin-user
+
+      at Object.<anonymous> (tests/storage.test.ts:321:15)
+
+  console.log
+    Debug CheckQuota: DB has 1 files total. User admin-id has 0 files. Sizes:
+
+      at Object.checkQuota (src/services/storage.service.ts:35:13)
+
+  console.log
+    Quota OK: Limit=1073741824, Usage=0, New=19, Total=19
+
+      at Object.checkQuota (src/services/storage.service.ts:55:15)
+
+FAIL tests/storage.test.ts (8.42 s)
+  Storage Service Integration Tests
+    POST /api/storage/upload
+      ○ skipped should upload a file successfully to S3
+      ○ skipped should fail if no file is attached
+      ○ skipped should handle S3 upload failure
+    GET /api/storage/files/:id
+      ○ skipped should retrieve file metadata
+      ○ skipped should return 404 for non-existent file
+    GET /api/storage/files/:id/content
+      ○ skipped should download file content from S3 stream
+      ○ skipped should return 404 for non-existent file
+      ○ skipped should handle S3 download error (e.g. file missing in S3)
+    DELETE /api/storage/files/:id
+      ○ skipped should return 404 if file not found
+      ○ skipped should delete file from DB and S3
+      ○ skipped should verify deletion from DB
+    Unauthorized Access
+      ○ skipped should return 401 if no token provided
+      ○ skipped should return 401 if token is invalid
+    Presigned URLs
+      POST /api/storage/upload-url
+        ○ skipped should generate a presigned upload URL
+        ○ skipped should fail validation if fields are missing
+      GET /api/storage/files/:id/url
+        ○ skipped should generate a presigned download URL
+        ○ skipped should return 404 for non-existent file
+    Storage Quotas
+      ✕ should reject upload if quota exceeded (1403 ms)
+      ○ skipped should allow upload if within quota
+      ○ skipped should reject presigned upload URL if quota exceeded
+
+  ● Storage Service Integration Tests › Storage Quotas › should reject upload if quota exceeded
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 500
+    Received: 201
+
+      329 |         .attach("file", TEST_FILE_PATH);
+      330 |
+    > 331 |       expect(res.statusCode).toBe(500);
+          |                              ^
+      332 |       expect(res.body.message).toContain("Storage quota exceeded");
+      333 |
+      334 |       // Clean up
+
+      at Object.<anonymous> (tests/storage.test.ts:331:30)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 19 skipped, 20 total
+Snapshots:   0 total
+Time:        8.869 s, estimated 10 s
+Ran all test suites with tests matching "should reject upload if quota exceeded".
+Force exiting Jest: Have you considered using `--detectOpenHandles` to detect async operations that kept running after all tests finished?

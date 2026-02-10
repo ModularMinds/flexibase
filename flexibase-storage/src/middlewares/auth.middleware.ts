@@ -42,3 +42,35 @@ export const authDelegation = async (
     });
   }
 };
+export const optionalAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return next(); // Proceed without user context
+    }
+
+    // Call Auth Service to verify token
+    const response = await axios.get(
+      `${env.AUTH_SERVICE_URL}/auth/verify-user`,
+      {
+        headers: { Authorization: authHeader },
+      },
+    );
+
+    if (response.data && response.data.isSuccess) {
+      (req as any).user = response.data.user;
+    }
+    next();
+  } catch (err: any) {
+    // If token is present but invalid, we might still want to proceed as guest?
+    // Usually if a token is provided and it's invalid, we should error.
+    // If token is missing, we proceed as guest.
+    logger.error("Optional auth delegation failed: " + err.message);
+    next(); // Proceed as guest even on error if it's optional
+  }
+};
