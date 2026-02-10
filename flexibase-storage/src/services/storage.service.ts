@@ -1,15 +1,30 @@
-import fs from "fs";
-import path from "path";
 import { prisma } from "../config/prisma";
 import { env } from "../config/env";
 import { logger } from "../config/logger";
+import { s3Client } from "../config/s3";
+import {
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+  HeadBucketCommand,
+  CreateBucketCommand,
+} from "@aws-sdk/client-s3";
+import fs from "fs";
 
-const UPLOAD_DIR = path.join(process.cwd(), env.STORAGE_BUCKET);
-
-// Ensure upload directory exists
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
+// Ensure bucket exists function
+const ensureBucket = async (bucketName: string) => {
+  try {
+    await s3Client.send(new HeadBucketCommand({ Bucket: bucketName }));
+  } catch (err: any) {
+    // If bucket not found, create it
+    if (err.name === "NotFound" || err.$metadata?.httpStatusCode === 404) {
+      logger.info(`Bucket ${bucketName} does not exist, creating...`);
+      await s3Client.send(new CreateBucketCommand({ Bucket: bucketName }));
+    } else {
+      throw err;
+    }
+  }
+};
 
 export const storageService = {
   uploadFile: async (
@@ -17,34 +32,43 @@ export const storageService = {
     bucket: string,
     userId: string,
   ) => {
-    // Create bucket dir if different from default
-    const bucketDir = path.join(process.cwd(), bucket);
-    if (!fs.existsSync(bucketDir)) {
-      fs.mkdirSync(bucketDir, { recursive: true });
+    await ensureBucket(bucket);
+
+    const fileContent = fs.readFileSync(file.path);
+    const key = `${Date.now()}-${file.originalname}`;
+
+    try {
+      await s3Client.send(
+        new PutObjectCommand({
+          Bucket: bucket,
+          Key: key,
+          Body: fileContent,
+          ContentType: file.mimetype,
+        }),
+      );
+
+      // Clean up local temp file
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+
+      const savedFile = await prisma.file.create({
+        data: {
+          originalName: file.originalname,
+          mimeType: file.mimetype,
+          size: file.size,
+          path: key, // Store S3 Key as path
+          bucket: bucket,
+          userId: userId,
+        },
+      });
+
+      return savedFile;
+    } catch (err) {
+      // Clean up local even if upload fails
+      if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+      throw err;
     }
-
-    // Move file from temporary location (or if using memory storage, write it)
-    // Multer diskStorage puts it in dest. If we want to organize by bucket:
-    const targetPath = path.join(bucketDir, file.filename);
-
-    // If multer config saved it elsewhere, move it.
-    // Assuming we configure multer to save to temp or root uploads.
-    // Let's assume multer saves to `uploads/` and we want `uploads/bucket/`?
-    // For simplicity, let's keep it handled by multer middleware config or move here.
-    // Use the file.path provided by multer.
-
-    const savedFile = await prisma.file.create({
-      data: {
-        originalName: file.originalname,
-        mimeType: file.mimetype,
-        size: file.size,
-        path: file.path,
-        bucket: bucket,
-        userId: userId,
-      },
-    });
-
-    return savedFile;
   },
 
   getFileMetadata: async (fileId: string) => {
@@ -53,13 +77,26 @@ export const storageService = {
     });
   },
 
-  getFileContentPath: async (fileId: string) => {
+  // Returns S3 stream now
+  getFileContentStream: async (fileId: string) => {
     const file = await prisma.file.findUnique({
       where: { id: fileId },
     });
 
     if (!file) return null;
-    return file.path;
+
+    try {
+      const command = new GetObjectCommand({
+        Bucket: file.bucket,
+        Key: file.path, // We stored Key in path
+      });
+
+      const response = await s3Client.send(command);
+      return response.Body; // Stream
+    } catch (err) {
+      logger.error(`Error fetching file from S3: ${err}`);
+      return null;
+    }
   },
 
   deleteFile: async (fileId: string) => {
@@ -71,14 +108,16 @@ export const storageService = {
       throw new Error("File not found");
     }
 
-    // Delete from FS
-    if (fs.existsSync(file.path)) {
-      try {
-        fs.unlinkSync(file.path);
-      } catch (err: any) {
-        logger.error(`Failed to delete file from disk: ${file.path}`, err);
-        // Continue to delete from DB? Yes.
-      }
+    try {
+      await s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: file.bucket,
+          Key: file.path,
+        }),
+      );
+    } catch (err) {
+      logger.error(`Failed to delete file from S3: ${err}`);
+      // Continue to delete from DB
     }
 
     await prisma.file.delete({

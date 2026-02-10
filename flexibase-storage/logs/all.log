@@ -1,0 +1,34 @@
+2026-02-10 11:39:10:3910 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:124:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 11:39:11:3911 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
+2026-02-10 11:41:11:4111 [31merror[39m: [31mError: S3 Upload Failed[39m
+[31m    at Object.<anonymous> (/home/tanmayvaij/project/flexibase/flexibase-storage/tests/storage.test.ts:124:9)[39m
+[31m    at Promise.then.completed (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:298:28)[39m
+[31m    at new Promise (<anonymous>)[39m
+[31m    at callAsyncCircusFn (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/utils.js:231:10)[39m
+[31m    at _callCircusTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:316:40)[39m
+[31m    at processTicksAndRejections (node:internal/process/task_queues:103:5)[39m
+[31m    at _runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:252:3)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:126:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at _runTestsForDescribeBlock (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:121:9)[39m
+[31m    at run (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/run.js:71:3)[39m
+[31m    at runAndTransformResultsToJestFormat (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)[39m
+[31m    at jestAdapter (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)[39m
+[31m    at runTestInternal (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:367:16)[39m
+[31m    at runTest (/home/tanmayvaij/project/flexibase/flexibase-storage/node_modules/jest-runner/build/runTest.js:444:34)[39m
+2026-02-10 11:41:12:4112 [31merror[39m: [31mError fetching file from S3: Error: S3 Error[39m
