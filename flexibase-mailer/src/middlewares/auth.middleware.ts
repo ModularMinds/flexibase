@@ -25,6 +25,7 @@ export const authDelegation = async (
       },
     );
 
+    // ... (existing code)
     if (response.data.isSuccess) {
       (req as any).user = response.data.user;
       next();
@@ -37,4 +38,15 @@ export const authDelegation = async (
       .status(401)
       .json({ isSuccess: false, message: "Authentication failed" });
   }
+};
+
+export const roleMiddleware = (roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const user = (req as any).user;
+    if (!user || !roles.includes(user.role)) {
+      res.status(403).json({ isSuccess: false, message: "Forbidden" });
+      return;
+    }
+    next();
+  };
 };

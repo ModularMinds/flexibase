@@ -9,8 +9,17 @@ export const sendMailController = async (
   next: NextFunction,
 ) => {
   try {
-    const { to, subject, text, html, templateId, templateContext, cc, bcc } =
-      req.body;
+    const {
+      to,
+      subject,
+      text,
+      html,
+      templateId,
+      templateContext,
+      locale,
+      cc,
+      bcc,
+    } = req.body;
 
     // Handle attachments from multer
     const attachments = ((req as any).files as any[])?.map((file: any) => ({
@@ -26,6 +35,7 @@ export const sendMailController = async (
       html,
       templateId,
       templateContext,
+      locale,
       cc,
       bcc,
       attachments,

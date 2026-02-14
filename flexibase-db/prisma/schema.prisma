@@ -11,3 +11,23 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model EmailLog {
+  id        String       @id @default(uuid())
+  messageId String?      @unique
+  recipient String
+  subject   String
+  status    String       @default("PENDING")
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  events    EmailEvent[]
+}
+
+model EmailEvent {
+  id        String   @id @default(uuid())
+  logId     String
+  type      String // OPEN, CLICK, BOUNCE, SPAM
+  metadata  Json?
+  createdAt DateTime @default(now())
+  log       EmailLog @relation(fields: [logId], references: [id])
+}

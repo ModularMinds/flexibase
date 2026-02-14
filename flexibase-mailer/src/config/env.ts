@@ -16,6 +16,11 @@ const envSchema = z.object({
   AUTH_SERVICE_URL: z.string().url().default("http://localhost:3001"),
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.string().transform(Number).default("6379"),
+  DATABASE_URL: z
+    .string()
+    .default(
+      "postgresql://postgres:postgres@localhost:5432/flexibase?schema=public",
+    ),
 });
 
 const parsed = envSchema.safeParse(process.env);
