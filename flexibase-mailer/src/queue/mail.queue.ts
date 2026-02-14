@@ -1,9 +1,13 @@
 import { Queue, Worker, Job } from "bullmq";
 import { env } from "../config/env";
 import { logger } from "../config/logger";
-import { mailerService, MailOptions } from "../services/mailer.service";
+import { SendMailResult, MailOptions } from "../providers/base.provider";
 import { templateService } from "../services/template.service";
+import { trackingService } from "../services/tracking.service";
+import { providerService } from "../services/provider.service";
+import prisma from "../db/client";
 import IORedis from "ioredis";
+import juice from "juice";
 
 const redisConnection = new IORedis({
   host: env.REDIS_HOST,
@@ -16,6 +20,7 @@ export const MAIL_QUEUE_NAME = "mail-queue";
 export interface MailJobData extends MailOptions {
   templateId?: string;
   templateContext?: Record<string, any>;
+  locale?: string;
 }
 
 // 1. Create the Queue
@@ -34,6 +39,7 @@ export const mailWorker = new Worker(
       html,
       templateId,
       templateContext,
+      locale,
       cc,
       bcc,
       attachments,
@@ -41,18 +47,38 @@ export const mailWorker = new Worker(
 
     logger.info(`🔄 Processing mail job ${job.id} for ${to}`);
 
+    // 1. Create Email Log in DB
+    const emailLog = await prisma.emailLog.create({
+      data: {
+        recipient: to,
+        subject,
+        status: "PENDING",
+      },
+    });
+
     try {
       let finalHtml = html;
 
-      // Render template if templateId is provided
+      // 2. Render template if templateId is provided
       if (templateId) {
         finalHtml = await templateService.render(
           templateId,
           templateContext || {},
+          locale,
         );
       }
 
-      await mailerService.sendMail({
+      // 3. Inject tracking pixel and wrap links if HTML is present
+      if (finalHtml) {
+        finalHtml = trackingService.injectPixel(finalHtml, emailLog.id);
+        finalHtml = trackingService.wrapLinks(finalHtml, emailLog.id);
+
+        // 4. Inline CSS for better email client compatibility
+        finalHtml = juice(finalHtml);
+      }
+
+      // 5. Send the email with failover
+      const info = await providerService.sendMail({
         to,
         subject,
         text,
@@ -62,8 +88,24 @@ export const mailWorker = new Worker(
         attachments,
       });
 
-      logger.info(`✅ Successfully processed mail job ${job.id}`);
-    } catch (error) {
+      // 6. Update Log with success
+      await prisma.emailLog.update({
+        where: { id: emailLog.id },
+        data: {
+          status: "SENT",
+          messageId: info.messageId,
+        },
+      });
+
+      logger.info(
+        `✅ Successfully processed mail job ${job.id} (Log: ${emailLog.id})`,
+      );
+    } catch (error: any) {
+      // Update log with failure
+      await prisma.emailLog.update({
+        where: { id: emailLog.id },
+        data: { status: "FAILED" },
+      });
       logger.error(`❌ Failed to process mail job ${job.id}:`, error);
       throw error; // Let BullMQ handle retries
     }

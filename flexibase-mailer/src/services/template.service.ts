@@ -9,12 +9,32 @@ class TemplateService {
   /**
    * Render a template with context
    */
+  /**
+   * Render a template with context and optional locale
+   */
   async render(
     templateId: string,
     context: Record<string, any>,
+    locale?: string,
   ): Promise<string> {
     try {
-      const filePath = path.join(this.templatesPath, `${templateId}.hbs`);
+      let filePath = path.join(this.templatesPath, `${templateId}.hbs`);
+
+      if (locale) {
+        const localePath = path.join(
+          this.templatesPath,
+          `${templateId}.${locale}.hbs`,
+        );
+        try {
+          await fs.access(localePath);
+          filePath = localePath;
+        } catch {
+          logger.warn(
+            `Locale template ${templateId}.${locale}.hbs not found, falling back to default.`,
+          );
+        }
+      }
+
       const source = await fs.readFile(filePath, "utf-8");
       const template = hbs.compile(source);
       return template(context);

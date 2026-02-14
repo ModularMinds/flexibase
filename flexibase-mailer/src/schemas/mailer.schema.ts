@@ -9,6 +9,7 @@ export const sendMailSchema = z.object({
       html: z.string().optional(),
       templateId: z.string().optional(),
       templateContext: z.record(z.any()).optional(),
+      locale: z.string().optional(),
       cc: z.string().email("Invalid CC email address").optional(),
       bcc: z.string().email("Invalid BCC email address").optional(),
     })
