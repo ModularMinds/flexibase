@@ -6,6 +6,7 @@ import {
   deleteFileController,
   getUploadUrlController,
   getDownloadUrlController,
+  listFilesController,
 } from "../controllers/storage.controller";
 import {
   authDelegation,
@@ -20,6 +21,7 @@ import {
   getFileContentSchema,
   deleteFileSchema,
   getUploadUrlSchema,
+  listFilesSchema,
 } from "../schemas/storage.schema";
 import { upload } from "../middlewares/upload.middleware";
 
@@ -211,10 +213,38 @@ storageRouter.get(
  *       404:
  *         description: File not found
  */
-storageRouter.delete(
-  "/files/:id",
-  storageRateLimiter,
-  authDelegation,
-  validateResource(deleteFileSchema) as any,
   deleteFileController,
+);
+
+/**
+ * @openapi
+ * /files:
+ *   get:
+ *     tags:
+ *       - Storage
+ *     summary: List files
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: bucket
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of files
+ */
+storageRouter.get(
+  "/files",
+  authDelegation,
+  validateResource(listFilesSchema) as any,
+  listFilesController,
 );

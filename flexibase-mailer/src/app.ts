@@ -5,6 +5,8 @@ import helmet from "helmet";
 import { env } from "./config/env";
 import { logger } from "./config/logger";
 import { mailerRouter } from "./routes/mailer.routes";
+import { templateRouter } from "./routes/template.routes";
+import { logRouter } from "./routes/log.routes";
 import { trackingRouter } from "./routes/tracking.routes";
 import { mailerToolsRouter } from "./routes/mailer-tools.routes";
 import { errorHandler } from "./middlewares/errorHandler.middleware";
@@ -37,6 +39,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.use("/api/mailer", mailerRouter);
+app.use("/api/mailer", templateRouter);
+app.use("/api/mailer", logRouter);
 app.use("/api/mailer/track", trackingRouter);
 app.use("/api/mailer/tools", mailerToolsRouter);
 

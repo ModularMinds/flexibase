@@ -130,6 +130,39 @@ export const storageService = {
     return file;
   },
 
+  listFiles: async (
+    user: UserContext, // List files visible to this user
+    bucket?: string,
+    page: number = 1,
+    limit: number = 20,
+  ) => {
+    const skip = (page - 1) * limit;
+
+    // Filter by user ownership OR shared visibility (simplification: just ownership for now or admin)
+    // Assuming admin can see all, regular user sees their own.
+    const whereClause: any = {};
+
+    if (bucket) {
+      whereClause.bucket = bucket;
+    }
+
+    if (user.role !== "ADMIN") {
+      whereClause.userId = user.id;
+    }
+
+    const [files, total] = await Promise.all([
+      prisma.file.findMany({
+        where: whereClause,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.file.count({ where: whereClause }),
+    ]);
+
+    return { files, total, page, totalPages: Math.ceil(total / limit) };
+  },
+
   // Returns S3 stream now
   getFileContentStream: async (fileId: string, user?: UserContext) => {
     const file = await prisma.file.findUnique({

@@ -33,3 +33,11 @@ export const deleteFileSchema = z.object({
     id: z.string().uuid("Invalid file ID"),
   }),
 });
+
+export const listFilesSchema = z.object({
+  query: z.object({
+    bucket: z.string().optional(),
+    page: z.string().regex(/^\d+$/).transform(Number).optional(),
+    limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+  }),
+});

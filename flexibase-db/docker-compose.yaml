@@ -2,31 +2,29 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15-alpine
-    container_name: postgres-db
-    restart: unless-stopped
+    image: postgres:15
+    container_name: flexibase-db-postgres
     ports:
       - "${DB_EXPOSE_PORT:-5432}:5432"
     environment:
-      POSTGRES_USER: ${FLEXIBASE_ADMIN_USER}
-      POSTGRES_PASSWORD: ${FLEXIBASE_ADMIN_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      - POSTGRES_USER=${FLEXIBASE_ADMIN_USER:-admin}
+      - POSTGRES_PASSWORD=${FLEXIBASE_ADMIN_PASSWORD:-password}
+      - POSTGRES_DB=${DB_NAME:-flexibase_db}
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U ${FLEXIBASE_ADMIN_USER:-admin} -d ${DB_NAME:-flexibase_db}"]
       interval: 5s
       timeout: 5s
       retries: 5
   
   redis:
     image: redis:alpine
-    container_name: flexibase-redis
-    restart: unless-stopped
+    container_name: flexibase-db-redis
     ports:
       - "6379:6379"
-    networks:
-      - flexibase-network
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -35,51 +33,68 @@ services:
 
   minio:
     image: minio/minio
-    container_name: flexibase-minio
-    restart: unless-stopped
-    command: server --console-address ":9001" /data
+    container_name: flexibase-db-minio
     ports:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin}
+    command: server /data --console-address ":9001"
     volumes:
       - minio-data:/data
-    networks:
-      - flexibase-network
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
 
+  # Auth Service is required for DB middleware
+  flexibase-auth:
+    build: 
+      context: ../flexibase-auth
+      dockerfile: Dockerfile
+    container_name: flexibase-db-auth
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DATABASE_URL=postgresql://${FLEXIBASE_ADMIN_USER:-admin}:${FLEXIBASE_ADMIN_PASSWORD:-password}@postgres:5432/${DB_NAME:-flexibase_db}?schema=public
+      - FLEXIBASE_AUTH_SECRET_KEY=${FLEXIBASE_AUTH_SECRET_KEY:-secret}
+      - FLEXIBASE_AUTH_REFRESH_SECRET_KEY=${FLEXIBASE_AUTH_REFRESH_SECRET_KEY:-refreshsecret}
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
   flexibase-db:
     build: 
       context: .
       dockerfile: Dockerfile
     container_name: flexibase-db
-    restart: unless-stopped
     ports:
-      - "${FLEXIBASE_DB_EXPOSE_PORT}:${FLEXIBASE_DB_EXPOSE_PORT}"
+      - "${FLEXIBASE_DB_EXPOSE_PORT:-5001}:${FLEXIBASE_DB_EXPOSE_PORT:-5001}"
     environment:
-      FLEXIBASE_DB_EXPOSE_PORT: ${FLEXIBASE_DB_EXPOSE_PORT}
-      FLEXIBASE_ADMIN_USER: ${FLEXIBASE_ADMIN_USER}
-      FLEXIBASE_ADMIN_PASSWORD: ${FLEXIBASE_ADMIN_PASSWORD}
-      DATABASE_URL: postgresql://${FLEXIBASE_ADMIN_USER}:${FLEXIBASE_ADMIN_PASSWORD}@postgres:5432/${DB_NAME}
-      REDIS_URL: redis://redis:6379
+      - PORT=${FLEXIBASE_DB_EXPOSE_PORT:-5001}
+      - DATABASE_URL=postgresql://${FLEXIBASE_ADMIN_USER:-admin}:${FLEXIBASE_ADMIN_PASSWORD:-password}@postgres:5432/${DB_NAME:-flexibase_db}?schema=public
+      - AUTH_SERVICE_URL=http://flexibase-auth:5000
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=development
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
-    networks:
-      - flexibase-network
+      flexibase-auth:
+        condition: service_started
+    restart: unless-stopped
 
 volumes:
   postgres-data:
   minio-data:
 
 networks:
-  flexibase-network:
-    name: flexibase-network
+  default:
+    name: flexibase-db-network

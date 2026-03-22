@@ -194,3 +194,28 @@ export const getDownloadUrlController = async (
     next(err);
   }
 };
+
+export const listFilesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { bucket, page, limit } = req.query;
+    const user = (req as any).user;
+
+    const result = await storageService.listFiles(
+      user,
+      bucket as string,
+      page ? parseInt(page as string) : 1,
+      limit ? parseInt(limit as string) : 20,
+    );
+
+    res.status(200).json({
+      isSuccess: true,
+      data: result,
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
